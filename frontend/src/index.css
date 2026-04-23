@@ -1,0 +1,146 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --brand-indigo: #6366f1;
+  --brand-blue: #3b82f6;
+  --brand-violet: #8b5cf6;
+  --brand-cyan: #06b6d4;
+  --surface-950: #0b0f19; /* Deep Navy */
+  --surface-900: #121828;
+  --surface-800: #1e2638;
+  --surface-700: #2c3852;
+}
+
+@layer base {
+  body {
+    background-color: var(--surface-950);
+    @apply text-slate-200 antialiased;
+    font-feature-settings: "cv02", "cv05", "cv11";
+    font-family: 'Outfit', sans-serif;
+  }
+
+  /* Global Select & Option Fix for Dark Theme */
+  select {
+    @apply cursor-pointer;
+  }
+  
+  option {
+    background-color: var(--surface-900);
+    color: white;
+    @apply font-medium;
+  }
+
+  /* Target specific browser overrides for dropdown lists */
+  select::-ms-expand { display: none; }
+  
+  /* Ensure select elements in glass containers inherit dark theme */
+  .glass select, .glass-card select {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+}
+
+@layer components {
+  .glass {
+    @apply bg-white/5 backdrop-blur-3xl border border-white/5 shadow-2xl;
+  }
+  
+  .glass-card {
+    @apply bg-slate-900/40 backdrop-blur-2xl border border-white/5 shadow-2xl rounded-[2.5rem];
+  }
+
+  .glass-dropdown {
+    @apply bg-slate-950/90 backdrop-blur-2xl border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] rounded-[2rem];
+  }
+
+  .btn-primary {
+    background: linear-gradient(to right, var(--brand-indigo), var(--brand-violet));
+    @apply text-white font-black uppercase tracking-widest text-[10px] py-4 px-8 rounded-3xl transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_10px_25px_-5px_rgba(139,92,246,0.5)] active:scale-[0.95] flex items-center justify-center gap-2 relative overflow-hidden;
+  }
+  
+  /* Simple CSS Ripple effect fallback if framer motion isn't used */
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s, height 0.3s, opacity 0.3s;
+    opacity: 0;
+  }
+  .btn-primary:active::after {
+    width: 200px;
+    height: 200px;
+    opacity: 1;
+    transition: 0s;
+  }
+
+  .btn-secondary {
+    @apply glass border-white/5 text-white font-black uppercase tracking-widest text-[10px] py-4 px-8 rounded-3xl hover:bg-white/5 transition-all active:scale-[0.98] flex items-center justify-center gap-2;
+  }
+
+  .gradient-text {
+    background: linear-gradient(to right, var(--brand-indigo), var(--brand-blue), var(--brand-violet));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .inp-base {
+     @apply w-full pl-12 pr-4 py-4 rounded-3xl border border-white/5 bg-white/5 text-white placeholder:text-slate-600 outline-none transition-all font-medium;
+  }
+  .inp-base:focus {
+    border-color: rgba(99, 102, 241, 0.3);
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+  }
+}
+
+@layer utilities {
+  .animate-shimmer {
+    animation: shimmer 2s infinite linear;
+  }
+  
+  .animate-glow {
+    animation: glow 4s infinite alternate;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes glow {
+  0% { filter: drop-shadow(0 0 5px rgba(99, 102, 241, 0.2)); }
+  100% { filter: drop-shadow(0 0 20px rgba(99, 102, 241, 0.4)); }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-white/5 rounded-full hover:bg-white/10 transition-colors;
+}
+
+.page-transition {
+  @apply transition-all duration-500 ease-in-out;
+}
+
+
