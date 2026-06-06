@@ -89,8 +89,8 @@ const CalendarView = () => {
     try {
       const headers = { 'Authorization': `Bearer ${token}` };
       const [statsRes, todosRes] = await Promise.all([
-        fetch('/api/dashboard/stats', { headers }),
-        fetch('/api/todos', { headers })
+        fetch('/api/dashboard/stats/', { headers }),
+        fetch('/api/todos/', { headers })
       ]);
       
       if (statsRes.ok && todosRes.ok) {

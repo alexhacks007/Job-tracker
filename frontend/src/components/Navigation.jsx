@@ -52,9 +52,9 @@ const Navigation = () => {
       try {
         const headers = { Authorization: `Bearer ${token}` };
         const [jobsRes, cosRes, todosRes] = await Promise.all([
-          fetch('/api/jobs', { headers }),
-          fetch('/api/companies', { headers }),
-          fetch('/api/todos', { headers }),
+          fetch('/api/jobs/', { headers }),
+          fetch('/api/companies/', { headers }),
+          fetch('/api/todos/', { headers }),
         ]);
 
         const [jobs, cos, todos] = await Promise.all([
@@ -90,7 +90,7 @@ const Navigation = () => {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const res = await fetch('/api/dashboard/stats', {
+        const res = await fetch('/api/dashboard/stats/', {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (res.ok) {

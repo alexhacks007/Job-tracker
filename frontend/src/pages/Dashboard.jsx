@@ -47,11 +47,11 @@ const Dashboard = () => {
           resHeatmap,
           resAchievements
         ] = await Promise.all([
-          fetch('/api/dashboard/stats', { headers }),
-          fetch('/api/insights', { headers }),
-          fetch('/api/analytics/funnel', { headers }),
-          fetch('/api/analytics/heatmap', { headers }),
-          fetch('/api/achievements', { headers })
+          fetch('/api/dashboard/stats/', { headers }),
+          fetch('/api/insights/', { headers }),
+          fetch('/api/analytics/funnel/', { headers }),
+          fetch('/api/analytics/heatmap/', { headers }),
+          fetch('/api/achievements/', { headers })
         ]);
 
         if (resStats.ok) setStats(await resStats.json());

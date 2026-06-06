@@ -11,7 +11,7 @@ const FloatingAddJob = () => {
 
   const handleSaveJob = async (jobData) => {
     try {
-      const res = await fetch('/api/jobs', {
+      const res = await fetch('/api/jobs/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -34,7 +34,7 @@ const TodoFormModal = ({ isOpen, onClose, onSave, todo }) => {
 
   useEffect(() => {
     if (!isOpen) return;
-    fetch('/api/companies', { headers: { Authorization: `Bearer ${token}` } })
+    fetch('/api/companies/', { headers: { Authorization: `Bearer ${token}` } })
       .then(r => r.json()).then(d => setCompanies(Array.isArray(d) ? d : [])).catch(() => {});
 
     if (todo) {

@@ -80,7 +80,7 @@ const BulkUploadModal = ({ onClose, onSuccess }) => {
        if (hLower.includes('phone') || hLower.includes('mobile')) newMapping.mobile = h;
        if (hLower.includes('address') || hLower.includes('location') || hLower.includes('city')) newMapping.address = h;
        if (hLower.includes('web') || hLower.includes('url')) newMapping.website = h;
-       if (hLower.includes('size') || hLower.includes('employees')) newMapping.company_size = h;
+       if (hLower.includes('size') || hLower.includes('employees') || hLower.includes('count') || hLower.includes('headcount')) newMapping.company_size = h;
        if (hLower.includes('type') || hLower.includes('industry')) newMapping.company_type = h;
        if (hLower.includes('note') || hLower.includes('desc')) newMapping.notes = h;
     });
@@ -107,7 +107,7 @@ const BulkUploadModal = ({ onClose, onSuccess }) => {
 
     try {
       setIsUploading(true);
-      const res = await fetch('/api/companies/bulk_upload', {
+      const res = await fetch('/api/companies/bulk_upload/', {
          method: 'POST',
          headers: {
             'Content-Type': 'application/json',

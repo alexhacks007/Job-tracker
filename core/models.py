@@ -81,6 +81,7 @@ class Company(models.Model):
     company_size = models.CharField(max_length=50, blank=True, null=True)
     company_type = models.CharField(max_length=50, blank=True, null=True)
     notes = models.TextField(null=True, blank=True)
+    is_email_invalid = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -201,6 +202,7 @@ class EmailCampaign(models.Model):
     status = models.CharField(max_length=50, default='Draft') # Draft, Running, Completed
     total_sent = models.IntegerField(default=0)
     total_failed = models.IntegerField(default=0)
+    total_invalid = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -211,7 +213,7 @@ class EmailLog(models.Model):
     campaign = models.ForeignKey(EmailCampaign, on_delete=models.CASCADE)
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     recipient_email = models.EmailField(max_length=255)
-    status = models.CharField(max_length=50, default='Pending') # Pending, Sent, Failed
+    status = models.CharField(max_length=50, default='Pending') # Pending, Sent, Failed, Invalid
     sent_at = models.DateTimeField(null=True, blank=True)
     error_message = models.TextField(null=True, blank=True)
 

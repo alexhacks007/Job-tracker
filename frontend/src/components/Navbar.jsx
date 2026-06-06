@@ -41,7 +41,7 @@ const Navbar = () => {
   const fetchNotifications = async () => {
     if (!token) return;
     try {
-      const res = await fetch('/api/insights', {
+      const res = await fetch('/api/insights/', {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
@@ -83,7 +83,7 @@ const Navbar = () => {
       if (!notif.is_read) setUnreadCount(prev => Math.max(0, prev - 1));
 
       // Mark as read in backend
-      await fetch(`/api/insights/${notif.id}/read`, {
+      await fetch(`/api/insights/${notif.id}/read/`, {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -111,10 +111,10 @@ const Navbar = () => {
      try {
        setNotifications([]);
        setUnreadCount(0);
-       await fetch('/api/insights/clear-all', {
-         method: 'DELETE',
-         headers: { Authorization: `Bearer ${token}` }
-       });
+        await fetch('/api/insights/clear-all/', {
+          method: 'DELETE',
+          headers: { Authorization: `Bearer ${token}` }
+        });
        toast.success("Sentinel history cleared");
      } catch (err) {
        toast.error("Failed to clear history");

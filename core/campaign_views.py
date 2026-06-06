@@ -22,6 +22,28 @@ def process_campaign_background(campaign_id):
         for log in logs:
             time.sleep(1.5) # Simulate SMTP delay and rate limiting
             
+            # 1. Database Blacklist Guard (Permanent Blocks)
+            if log.company.is_email_invalid:
+                log.status = 'Invalid'
+                log.error_message = "Permanent Blacklist: Contact marked as invalid/bounced"
+                log.sent_at = timezone.now()
+                log.save()
+                campaign.total_invalid += 1
+                campaign.save()
+                continue
+
+            # 2. Real-time Deliverability Guard (DNS Lookup)
+            from .email_verifier import verify_email_deliverability
+            v_result = verify_email_deliverability(log.recipient_email)
+            if v_result['status'] == 'invalid':
+                log.status = 'Invalid'
+                log.error_message = f"Identification Failure: {v_result['reason']}"
+                log.sent_at = timezone.now()
+                log.save()
+                campaign.total_invalid += 1
+                campaign.save()
+                continue
+
             # Simple AI/Variable substitution
             body = campaign.template.body
             body = body.replace('{{company_name}}', log.company.name or '')

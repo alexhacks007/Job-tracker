@@ -33,7 +33,7 @@ const AdminDashboard = () => {
     const fetchAdminStats = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`/api/dashboard/admin?days=${timeRange}`, {
+        const res = await fetch(`/api/dashboard/admin/?days=${timeRange}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (res.ok) setStats(await res.json());
@@ -48,7 +48,7 @@ const AdminDashboard = () => {
 
   const handleSendNudge = async (userId, userName) => {
     try {
-      const res = await fetch(`/api/rbac/users/${userId}/nudge`, {
+      const res = await fetch(`/api/rbac/users/${userId}/nudge/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

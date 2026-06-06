@@ -22,7 +22,7 @@ const Jobs = () => {
   const fetchJobs = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch('/api/jobs', {
+      const res = await fetch('/api/jobs/', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -43,8 +43,8 @@ const Jobs = () => {
     try {
       const isEditing = !!currentJob;
       const url = isEditing 
-        ? `/api/jobs/${currentJob.id}`
-        : '/api/jobs';
+        ? `/api/jobs/${currentJob.id}/`
+        : '/api/jobs/';
       
       const res = await fetch(url, {
         method: isEditing ? 'PUT' : 'POST',
@@ -68,7 +68,7 @@ const Jobs = () => {
   const handleDelete = async (jobId) => {
     if (!window.confirm('Are you sure?')) return;
     try {
-      const res = await fetch(`/api/jobs/${jobId}`, {
+      const res = await fetch(`/api/jobs/${jobId}/`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });

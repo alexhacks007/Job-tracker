@@ -20,8 +20,8 @@ const AdminRBAC = () => {
     try {
       setLoading(true);
       const [rbacRes, analyticsRes] = await Promise.all([
-        fetch('/api/rbac', { headers: { Authorization: `Bearer ${token}` } }),
-        fetch('/api/rbac/analytics', { headers: { Authorization: `Bearer ${token}` } })
+        fetch('/api/rbac/', { headers: { Authorization: `Bearer ${token}` } }),
+        fetch('/api/rbac/analytics/', { headers: { Authorization: `Bearer ${token}` } })
       ]);
       
       if (rbacRes.ok && analyticsRes.ok) {
@@ -43,7 +43,7 @@ const AdminRBAC = () => {
 
   const handleSeed = async () => {
     try {
-      const res = await fetch('/api/rbac/seed', {
+      const res = await fetch('/api/rbac/seed/', {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -58,7 +58,7 @@ const AdminRBAC = () => {
 
   const handleAssignRole = async (userId, roleId) => {
     try {
-      const res = await fetch('/api/rbac/assign-role', {
+      const res = await fetch('/api/rbac/assign-role/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ user_id: userId, role_id: roleId })
@@ -85,7 +85,7 @@ const AdminRBAC = () => {
     }
 
     try {
-      const res = await fetch('/api/rbac/role-permissions', {
+      const res = await fetch('/api/rbac/role-permissions/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ role_id: roleId, permission_ids: newPerms })
@@ -103,7 +103,7 @@ const AdminRBAC = () => {
     e.preventDefault();
     if (!newRole.trim()) return;
     try {
-      const res = await fetch('/api/rbac/roles', {
+      const res = await fetch('/api/rbac/roles/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ name: newRole })
@@ -120,7 +120,7 @@ const AdminRBAC = () => {
     e.preventDefault();
     if (!newPerm.trim()) return;
     try {
-        const res = await fetch('/api/rbac/permissions', {
+        const res = await fetch('/api/rbac/permissions/', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
           body: JSON.stringify({ name: newPerm })

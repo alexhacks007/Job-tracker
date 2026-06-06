@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { motion } from 'framer-motion';
-import { Send, Users, Mail, Activity, Plus, Play, RefreshCw, Archive, CheckCircle, XCircle, Clock } from 'lucide-react';
+import { Send, Users, Mail, Activity, Plus, Play, RefreshCw, Archive, CheckCircle, XCircle, Clock, AlertTriangle, ShieldCheck } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const EmailCampaigns = () => {
@@ -12,6 +12,7 @@ const EmailCampaigns = () => {
   const [companies, setCompanies] = useState([]);
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [verifyingEmails, setVerifyingEmails] = useState({}); // { email: { status, reason } }
   const [selectedCampaign, setSelectedCampaign] = useState(null);
 
   const [newTemplate, setNewTemplate] = useState({ name: '', subject: '', body: '', resume: null });
@@ -33,6 +34,8 @@ const EmailCampaigns = () => {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [locationFilter, setLocationFilter] = useState('');
+  const [sizeFilter, setSizeFilter] = useState('all');
+  const [typeFilter, setTypeFilter] = useState('all');
   const [historyFilter, setHistoryFilter] = useState('all');
 
   const [logSearch, setLogSearch] = useState('');
@@ -68,7 +71,7 @@ const EmailCampaigns = () => {
   const handleCreateTemplate = async (e) => {
     e.preventDefault();
     try {
-      const url = editingTemplateId ? `/api/email-templates/${editingTemplateId}` : '/api/email-templates';
+      const url = editingTemplateId ? `/api/email-templates/${editingTemplateId}/` : '/api/email-templates/';
       
       // We use PATCH for editing if we might not want to re-upload the same file, 
       // but let's just stick to PUT for consistency if that's what we used before.
@@ -109,7 +112,7 @@ const EmailCampaigns = () => {
   const handleDeleteTemplate = async (id) => {
     if (!window.confirm("Are you sure you want to delete this template?")) return;
     try {
-      const res = await fetch(`/api/email-templates/${id}`, {
+      const res = await fetch(`/api/email-templates/${id}/`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -128,14 +131,51 @@ const EmailCampaigns = () => {
 
   const handleCreateCampaign = async (e) => {
     e.preventDefault();
-    if (!newCampaign.template || newCampaign.selectedCompanies.length === 0) {
-      toast.error("Select a template and at least one company");
+    // Advanced Validation Check: Mandatory Deep Scan
+    toast.loading("Performing deep deliverability scan...", { id: 'verify-scan' });
+    const selectedCompaniesData = companies.filter(c => newCampaign.selectedCompanies.includes(c.id));
+    let hasInvalid = false;
+    const newVerifications = { ...verifyingEmails };
+
+    for (const comp of selectedCompaniesData) {
+      if (!newVerifications[comp.email] || newVerifications[comp.email].status === 'unknown') {
+        try {
+          const vRes = await fetch('/api/auth/verify-email/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+            body: JSON.stringify({ email: comp.email })
+          });
+          if (vRes.ok) {
+            const result = await vRes.json();
+            newVerifications[comp.email] = result;
+            if (result.status === 'invalid') hasInvalid = true;
+          }
+        } catch (err) {
+           console.error("Verification error", err);
+        }
+      } else if (newVerifications[comp.email].status === 'invalid') {
+        hasInvalid = true;
+      }
+    }
+
+    setVerifyingEmails(newVerifications);
+    toast.dismiss('verify-scan');
+
+    const validCompanies = selectedCompaniesData.filter(c => newVerifications[c.email]?.status !== 'invalid');
+    const invalidCount = selectedCompaniesData.length - validCompanies.length;
+
+    if (validCompanies.length === 0) {
+      toast.error("Launch Blocked: All selected contacts failed identification. Please fix the addresses before proceeding.");
       return;
+    }
+
+    if (invalidCount > 0) {
+      toast.success(`Smart Guard: Proceeding with ${validCompanies.length} valid contacts. ${invalidCount} invalid addresses were automatically skipped.`);
     }
 
     try {
       // Create campaign
-      const res = await fetch('/api/email-campaigns', {
+      const res = await fetch('/api/email-campaigns/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ name: newCampaign.name, template: newCampaign.template })
@@ -144,8 +184,9 @@ const EmailCampaigns = () => {
       if (res.ok) {
         const campaignData = await res.json();
         
-        // Trigger bulk send
-        const sendRes = await fetch(`/api/email-campaigns/${campaignData.id}/send_bulk`, {
+        // Trigger bulk send with ALL selected company IDs
+        // The backend 'Smart Firewall' will safely skip the invalid ones and update the counts
+        const sendRes = await fetch(`/api/email-campaigns/${campaignData.id}/send_bulk/`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
           body: JSON.stringify({ company_ids: newCampaign.selectedCompanies })
@@ -171,6 +212,44 @@ const EmailCampaigns = () => {
     }));
   };
 
+  const handleVerifyEmail = async (e, email) => {
+    e.stopPropagation();
+    if (!email) return;
+    setVerifyingEmails(prev => ({ ...prev, [email]: { status: 'loading' } }));
+    try {
+      const res = await fetch('/api/auth/verify-email/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ email })
+      });
+      if (res.ok) {
+        const result = await res.json();
+        setVerifyingEmails(prev => ({ ...prev, [email]: result }));
+        if (result.status === 'valid') toast.success(`Validated: ${email}`);
+        else if (result.status === 'risky') toast.warn(`Risky: ${result.reason}`);
+        else toast.error(`Invalid: ${result.reason}`);
+      }
+    } catch {
+      toast.error('Verification failed');
+      setVerifyingEmails(prev => ({ ...prev, [email]: { status: 'unknown', reason: 'Service unavailable' } }));
+    }
+  };
+
+  const handleMarkInvalid = async (companyId) => {
+    try {
+      const res = await fetch(`/api/companies/${companyId}/mark_invalid/`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        toast.success("Email marked as permanently invalid");
+        fetchData();
+      }
+    } catch {
+      toast.error("Failed to mark email as invalid");
+    }
+  };
+
   const uniqueLocations = [...new Set(companies.map(c => c.address?.split(',').pop().trim()).filter(Boolean))].sort();
 
   const companyLastContact = {};
@@ -190,6 +269,35 @@ const EmailCampaigns = () => {
       if (!matchesSearch) return false;
       
       if (locationFilter && !c.address?.includes(locationFilter)) return false;
+      if (sizeFilter !== 'all') {
+        const size = c.company_size || '';
+        if (size === sizeFilter) {
+          // Direct match
+        } else {
+          const parseRange = (s) => {
+            if (!s) return null;
+            const match = s.match(/(\d+)\s*[-–]\s*(\d+)/);
+            if (match) return [parseInt(match[1]), parseInt(match[2])];
+            const plusMatch = s.match(/(\d+)\+/);
+            if (plusMatch) return [parseInt(plusMatch[1]), 1000000];
+            const singleMatch = s.match(/(\d+)/);
+            if (singleMatch) return [parseInt(singleMatch[1]), parseInt(singleMatch[1])];
+            return null;
+          };
+
+          const filterRange = parseRange(sizeFilter);
+          const companyRange = parseRange(size);
+
+          if (filterRange && companyRange) {
+             const [fMin, fMax] = filterRange;
+             const [cMin, cMax] = companyRange;
+             if (!(cMax >= fMin && cMin <= fMax)) return false;
+          } else {
+             return false;
+          }
+        }
+      }
+      if (typeFilter !== 'all' && c.company_type !== typeFilter) return false;
       
       const lastContact = companyLastContact[c.id];
       if (historyFilter === 'never_contacted') {
@@ -306,7 +414,7 @@ const EmailCampaigns = () => {
                   </button>
                </div>
 
-               <div className="grid grid-cols-3 gap-4 mb-8">
+               <div className="grid grid-cols-4 gap-4 mb-8">
                   <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl text-center">
                      <p className="text-2xl font-black text-emerald-400">{selectedCampaign.total_sent}</p>
                      <p className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">Sent</p>
@@ -315,8 +423,12 @@ const EmailCampaigns = () => {
                      <p className="text-2xl font-black text-rose-400">{selectedCampaign.total_failed}</p>
                      <p className="text-[10px] font-bold text-rose-500 uppercase tracking-widest">Failed</p>
                   </div>
+                  <div className="p-4 bg-amber-500/10 border border-amber-500/20 rounded-2xl text-center">
+                     <p className="text-2xl font-black text-amber-500">{selectedCampaign.total_invalid || 0}</p>
+                     <p className="text-[10px] font-bold text-amber-500 uppercase tracking-widest">Invalid</p>
+                  </div>
                   <div className="p-4 bg-white/5 border border-white/10 rounded-2xl text-center">
-                     <p className="text-2xl font-black text-white">{selectedCampaign.total_sent + selectedCampaign.total_failed}</p>
+                     <p className="text-2xl font-black text-white">{selectedCampaign.total_sent + selectedCampaign.total_failed + (selectedCampaign.total_invalid || 0)}</p>
                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total</p>
                   </div>
                </div>
@@ -381,6 +493,24 @@ const EmailCampaigns = () => {
                             <option value="">All Locations</option>
                             {uniqueLocations.map(loc => <option key={loc} value={loc}>{loc}</option>)}
                          </select>
+
+                         <select className="bg-black/20 border border-slate-700 rounded-lg p-2 text-sm text-white focus:border-brand-indigo outline-none" value={sizeFilter} onChange={e => setSizeFilter(e.target.value)}>
+                            <option value="all">All Sizes</option>
+                            <option value="1-10">1-10 employees</option>
+                            <option value="11-50">11-50 employees</option>
+                            <option value="51-200">51-200 employees</option>
+                            <option value="201-500">201-500 employees</option>
+                            <option value="500+">500+ employees</option>
+                         </select>
+
+                         <select className="bg-black/20 border border-slate-700 rounded-lg p-2 text-sm text-white focus:border-brand-indigo outline-none" value={typeFilter} onChange={e => setTypeFilter(e.target.value)}>
+                            <option value="all">All Types</option>
+                            <option value="Startup">Startup</option>
+                            <option value="MNC">MNC</option>
+                            <option value="Agency">Agency</option>
+                            <option value="Product">Product-based</option>
+                            <option value="Service">Service-based</option>
+                         </select>
                          
                          <select className="bg-black/20 border border-slate-700 rounded-lg p-2 text-sm text-white focus:border-brand-indigo outline-none" value={historyFilter} onChange={e => setHistoryFilter(e.target.value)}>
                              <option value="all">Any History</option>
@@ -412,8 +542,31 @@ const EmailCampaigns = () => {
                                   {lastContact && <span className="text-[10px] text-slate-500 font-mono">Last: {lastContact.toLocaleDateString()}</span>}
                                </p>
                                <div className="flex justify-between items-center">
-                                 <p className="text-xs text-slate-400">{c.email}</p>
-                                 <p className="text-[10px] text-slate-500 bg-black/30 px-1.5 py-0.5 rounded">{c.address || 'Remote'}</p>
+                                 <p className="text-xs text-slate-400 flex items-center gap-1">
+                                   {c.email}
+                                   {(() => {
+                                      const verification = verifyingEmails[c.email];
+                                      if (verification?.status === 'loading') return <RefreshCw size={10} className="animate-spin text-brand-indigo" />;
+                                      if (verification?.status === 'valid') return <CheckCircle size={10} className="text-emerald-500" title="MX Records Verified" />;
+                                      if (verification?.status === 'invalid') return <XCircle size={10} className="text-rose-500" title={verification.reason} />;
+                                      if (verification?.status === 'risky') return <AlertTriangle size={10} className="text-amber-500" title={verification.reason} />;
+                                      
+                                      const isSyntaxValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(c.email);
+                                      return (
+                                        <button 
+                                          onClick={(e) => handleVerifyEmail(e, c.email)}
+                                          className={`p-0.5 rounded hover:bg-white/10 transition-colors ${!isSyntaxValid ? 'text-rose-500' : 'text-slate-500 hover:text-brand-indigo'}`}
+                                          title={!isSyntaxValid ? "Malformed Syntax - Click to re-verify" : "Click to verify deliverability (MX Check)"}
+                                        >
+                                          <ShieldCheck size={12} />
+                                        </button>
+                                      );
+                                   })()}
+                                 </p>
+                                 <div className="flex gap-1">
+                                    {c.company_size && <p className="text-[10px] text-brand-indigo bg-brand-indigo/10 px-1.5 py-0.5 rounded">{c.company_size}</p>}
+                                    <p className="text-[10px] text-slate-500 bg-black/30 px-1.5 py-0.5 rounded">{c.address || 'Remote'}</p>
+                                 </div>
                                </div>
                              </div>
                            </div>
@@ -452,6 +605,10 @@ const EmailCampaigns = () => {
                            <div className="text-center">
                               <p className="text-2xl font-black text-red-400">{c.total_failed}</p>
                               <p className="text-xs text-slate-500 uppercase tracking-wider font-bold">Failed</p>
+                           </div>
+                           <div className="text-center">
+                              <p className="text-2xl font-black text-amber-500">{c.total_invalid || 0}</p>
+                              <p className="text-xs text-slate-500 uppercase tracking-wider font-bold">Invalid</p>
                            </div>
                            <div className="text-center">
                               <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${c.status === 'Running' ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30' : c.status === 'Completed' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-slate-500/20 text-slate-400 border border-slate-500/30'}`}>
@@ -569,6 +726,7 @@ const EmailCampaigns = () => {
                 <option value="Sent">Sent</option>
                 <option value="Pending">Pending</option>
                 <option value="Failed">Failed</option>
+                <option value="Invalid">Invalid</option>
              </select>
 
              <select className="bg-black/20 border border-slate-700 rounded-lg p-2 text-sm text-white focus:border-brand-indigo outline-none min-w-[150px]" value={logDateFilter} onChange={e => setLogDateFilter(e.target.value)}>
@@ -600,7 +758,17 @@ const EmailCampaigns = () => {
                       <td className="p-4">
                          {log.status === 'Sent' ? <span className="flex items-center gap-1 text-emerald-400 text-xs font-bold"><CheckCircle size={14}/> SENT</span> :
                           log.status === 'Pending' ? <span className="flex items-center gap-1 text-orange-400 text-xs font-bold"><Clock size={14}/> PENDING</span> :
-                          <span className="flex items-center gap-1 text-red-400 text-xs font-bold"><XCircle size={14}/> FAILED</span>}
+                                                    log.status === 'Invalid' ? (
+                            <div className="flex flex-col gap-1">
+                              <span className="flex items-center gap-1 text-amber-400 text-xs font-bold"><AlertTriangle size={14}/> INVALID</span>
+                              <button onClick={() => handleMarkInvalid(log.company)} className="text-[9px] text-slate-500 hover:text-white underline text-left">Blacklist Contact</button>
+                            </div>
+                          ) : (
+                            <div className="flex flex-col gap-1">
+                              <span className="flex items-center gap-1 text-red-400 text-xs font-bold"><XCircle size={14}/> FAILED</span>
+                              <button onClick={() => handleMarkInvalid(log.company)} className="text-[9px] text-slate-500 hover:text-white underline text-left">Blacklist Contact</button>
+                            </div>
+                          )}
                       </td>
                       <td className="p-4 text-sm text-slate-400">{log.sent_at ? new Date(log.sent_at).toLocaleString() : '-'}</td>
                    </tr>

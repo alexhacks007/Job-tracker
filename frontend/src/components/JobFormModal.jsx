@@ -30,7 +30,7 @@ const JobFormModal = ({ isOpen, onClose, onSave, job }) => {
 
   useEffect(() => {
     if (!isOpen) return;
-    fetch('/api/companies', { headers: { Authorization: `Bearer ${token}` } })
+    fetch('/api/companies/', { headers: { Authorization: `Bearer ${token}` } })
       .then(r => r.json()).then(data => setCompanies(Array.isArray(data) ? data : [])).catch(() => {});
 
     if (job) {

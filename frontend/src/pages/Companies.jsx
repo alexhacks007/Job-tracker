@@ -81,27 +81,27 @@ const CompanyModal = ({ isOpen, onClose, onSave, company }) => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <label className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">Company Size</label>
-                <select name="company_size" value={form.company_size || ''} onChange={handle}
-                  className="w-full rounded-2xl border border-white/5 p-3.5 bg-slate-800 text-white focus:ring-2 focus:ring-brand-indigo outline-none transition-all">
-                  <option value="">-- Select Size --</option>
+                <input list="size-options" name="company_size" value={form.company_size || ''} onChange={handle} placeholder="e.g. 50, 100-500"
+                  className="w-full rounded-2xl border border-white/5 p-3.5 bg-white/5 text-white focus:ring-2 focus:ring-brand-indigo outline-none transition-all placeholder:text-slate-600" />
+                <datalist id="size-options">
                   <option value="1-10">1-10 employees</option>
                   <option value="11-50">11-50 employees</option>
                   <option value="51-200">51-200 employees</option>
                   <option value="201-500">201-500 employees</option>
                   <option value="500+">500+ employees</option>
-                </select>
+                </datalist>
               </div>
               <div className="space-y-2">
                 <label className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">Company Type</label>
-                <select name="company_type" value={form.company_type || ''} onChange={handle}
-                  className="w-full rounded-2xl border border-white/5 p-3.5 bg-slate-800 text-white focus:ring-2 focus:ring-brand-indigo outline-none transition-all">
-                  <option value="">-- Select Type --</option>
+                <input list="type-options" name="company_type" value={form.company_type || ''} onChange={handle} placeholder="e.g. Startup, MNC"
+                  className="w-full rounded-2xl border border-white/5 p-3.5 bg-white/5 text-white focus:ring-2 focus:ring-brand-indigo outline-none transition-all placeholder:text-slate-600" />
+                <datalist id="type-options">
                   <option value="Startup">Startup</option>
                   <option value="MNC">MNC</option>
                   <option value="Agency">Agency</option>
                   <option value="Product">Product-based</option>
                   <option value="Service">Service-based</option>
-                </select>
+                </datalist>
               </div>
             </div>
 
@@ -165,7 +165,7 @@ const Companies = () => {
   const handleSave = async (form) => {
     try {
       const isEdit = !!current;
-      const url = isEdit ? `/api/companies/${current.id}` : '/api/companies';
+      const url = isEdit ? `/api/companies/${current.id}/` : '/api/companies/';
       const res = await fetch(url, {
         method: isEdit ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
@@ -180,7 +180,7 @@ const Companies = () => {
   const handleDelete = async (id) => {
     if (!window.confirm('Delete this company?')) return;
     try {
-      const res = await fetch(`/api/companies/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
+      const res = await fetch(`/api/companies/${id}/`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
       if (res.ok) { toast.success(data.message); fetchCompanies(); }
       else toast.error(data.message || 'Delete failed');
@@ -189,7 +189,7 @@ const Companies = () => {
 
   const handleExport = async () => {
     try {
-      const res = await fetch('/api/export/companies', {
+      const res = await fetch('/api/export/companies/', {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
@@ -220,7 +220,35 @@ const Companies = () => {
     if (!matchesSearch) return false;
 
     if (locationFilter !== 'all' && !c.address?.includes(locationFilter)) return false;
-    if (sizeFilter !== 'all' && c.company_size !== sizeFilter) return false;
+    if (sizeFilter !== 'all') {
+      const size = c.company_size || '';
+      if (size === sizeFilter) {
+        // Direct match
+      } else {
+        const parseRange = (s) => {
+          if (!s) return null;
+          const match = s.match(/(\d+)\s*[-–]\s*(\d+)/);
+          if (match) return [parseInt(match[1]), parseInt(match[2])];
+          const plusMatch = s.match(/(\d+)\+/);
+          if (plusMatch) return [parseInt(plusMatch[1]), 1000000];
+          const singleMatch = s.match(/(\d+)/);
+          if (singleMatch) return [parseInt(singleMatch[1]), parseInt(singleMatch[1])];
+          return null;
+        };
+
+        const filterRange = parseRange(sizeFilter);
+        const companyRange = parseRange(size);
+
+        if (filterRange && companyRange) {
+           const [fMin, fMax] = filterRange;
+           const [cMin, cMax] = companyRange;
+           // Overlap check
+           if (!(cMax >= fMin && cMin <= fMax)) return false;
+        } else {
+           return false;
+        }
+      }
+    }
     if (typeFilter !== 'all' && c.company_type !== typeFilter) return false;
     
     if (historyFilter !== 'all') {
@@ -388,6 +416,10 @@ const Companies = () => {
                     <div>
                       <h3 className="font-bold text-xl text-white group-hover:text-brand-indigo transition-colors">{c.name}</h3>
                       {c.address && <p className="text-xs text-slate-500 font-bold uppercase tracking-wider mt-1 flex items-center gap-2"><MapPin size={12} className="text-slate-600" />{c.address}</p>}
+                      <div className="flex gap-2 mt-2">
+                        {c.company_size && <span className="text-[10px] bg-brand-indigo/10 text-brand-indigo px-2 py-0.5 rounded-full font-bold">{c.company_size} emp</span>}
+                        {c.company_type && <span className="text-[10px] bg-brand-violet/10 text-brand-violet px-2 py-0.5 rounded-full font-bold">{c.company_type}</span>}
+                      </div>
                     </div>
                   </div>
                   {/* Email Count Badge */}
@@ -538,7 +570,9 @@ const Companies = () => {
                               </div>
                               <h4 className="text-sm font-bold text-white mb-1">{ev.subject}</h4>
                               <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ${
-                                 ev.status === 'Sent' || ev.status === 'Applied' || ev.status === 'completed' ? 'text-emerald-500' : 'text-slate-500'
+                                 ev.status === 'Sent' || ev.status === 'Applied' || ev.status === 'completed' ? 'text-emerald-500' : 
+                                 ev.status === 'Invalid' ? 'text-amber-500' :
+                                 'text-slate-500'
                               }`}>
                                  {ev.status}
                               </span>

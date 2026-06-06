@@ -12,6 +12,7 @@ from django.contrib.auth import get_user_model
 import urllib.request
 import json
 import pandas as pd
+from .email_verifier import verify_email_deliverability
 
 User = get_user_model()
 
@@ -76,7 +77,30 @@ class CompanyViewSet(viewsets.ModelViewSet):
         return Company.objects.filter(user=self.request.user)
     
     def perform_create(self, serializer):
+        email = self.request.data.get('email')
+        mobile = self.request.data.get('mobile')
+        
+        # Check for duplicates (if email or mobile is provided)
+        query = Q(user=self.request.user)
+        conditions = []
+        if email:
+            conditions.append(Q(email=email))
+        if mobile:
+            conditions.append(Q(mobile=mobile))
+            
+        if conditions:
+            if Company.objects.filter(query & (conditions[0] | (conditions[1] if len(conditions) > 1 else Q()))).exists():
+                from rest_framework.exceptions import ValidationError
+                raise ValidationError("A company with this email or mobile number already exists in your directory.")
+
         serializer.save(user=self.request.user)
+
+    @action(detail=True, methods=['post'])
+    def mark_invalid(self, request, pk=None):
+        company = self.get_object()
+        company.is_email_invalid = True
+        company.save()
+        return Response({'status': 'marked as invalid'})
 
     @action(detail=False, methods=['post'])
     def bulk_upload(self, request):
@@ -85,15 +109,41 @@ class CompanyViewSet(viewsets.ModelViewSet):
             return Response({'error': 'Expected a list of companies'}, status=status.HTTP_400_BAD_REQUEST)
 
         created_count = 0
+        skipped_count = 0
+        
+        # 1. Extract all incoming emails/mobiles to check in one query
+        incoming_emails = [item.get('email') for item in data if item.get('email')]
+        incoming_mobiles = [item.get('mobile') for item in data if item.get('mobile')]
+        
+        # 2. Fetch existing identifiers for this user
+        existing_emails = set(Company.objects.filter(user=self.request.user, email__in=incoming_emails).values_list('email', flat=True))
+        existing_mobiles = set(Company.objects.filter(user=self.request.user, mobile__in=incoming_mobiles).values_list('mobile', flat=True))
+        
+        # 3. Process the batch
         for item in data:
+            email = item.get('email')
+            mobile = item.get('mobile')
+            
+            # Check against pre-fetched existing data
+            if (email and email in existing_emails) or (mobile and mobile in existing_mobiles):
+                skipped_count += 1
+                continue # Skip this one and move to the next item immediately
+
             serializer = self.get_serializer(data=item)
             if serializer.is_valid():
                 serializer.save(user=self.request.user)
                 created_count += 1
+                # Add newly created ones to our set to prevent duplicates within the same batch
+                if email: existing_emails.add(email)
+                if mobile: existing_mobiles.add(mobile)
             else:
-                pass # Optionally log errors
+                skipped_count += 1
 
-        return Response({'message': f'Successfully imported {created_count} companies.', 'created': created_count}, status=status.HTTP_201_CREATED)
+        return Response({
+            'message': f'Bulk import finished. {created_count} new companies added, {skipped_count} skipped.', 
+            'created': created_count,
+            'skipped': skipped_count
+        }, status=status.HTTP_201_CREATED)
 
 class JobViewSet(viewsets.ModelViewSet):
     serializer_class = JobSerializer
@@ -141,6 +191,15 @@ class LocalJobSearchView(APIView):
         except Exception:
             # Fallback to empty results instead of 500 error
             return Response([])
+
+class VerifyEmailView(APIView):
+    def post(self, request):
+        email = request.data.get('email')
+        if not email:
+            return Response({'error': 'Email is required'}, status=400)
+        
+        result = verify_email_deliverability(email)
+        return Response(result)
 
 class ExportCompaniesView(APIView):
     def get(self, request):

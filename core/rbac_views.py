@@ -2,11 +2,12 @@ from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view, permission_classes
-from .models import Role, Permission, RolePermission, UserRole, User, ActivityLog, Job, Todo, AIInsight
+from .models import Role, Permission, RolePermission, UserRole, User, ActivityLog, Job, Todo, AIInsight, Company, Achievement
 from .serializers import UserSerializer
 from django.db import models
 from django.db.models import Count, Max, Q
 from django.utils import timezone
+import collections
 from datetime import timedelta
 
 class IsAdminOrSuperAdmin(permissions.BasePermission):
@@ -240,6 +241,32 @@ class UserFullProfileView(APIView):
         cognitive_load = min(active_jobs * 5, 100)
         speed = min((total_jobs + total_todos) * 2, 100)
 
+        # Heatmap Data (Last 180 days)
+        end_date = timezone.now().date()
+        start_date = end_date - timedelta(days=179)
+        
+        activity_dates = []
+        activity_dates.extend(Job.objects.filter(user=user, created_at__date__gte=start_date).values_list('created_at__date', flat=True))
+        activity_dates.extend(Todo.objects.filter(user=user, created_at__date__gte=start_date).values_list('created_at__date', flat=True))
+        activity_dates.extend(ActivityLog.objects.filter(user=user, created_at__date__gte=start_date).values_list('created_at__date', flat=True))
+        
+        date_counts = collections.Counter(activity_dates)
+        heatmap_data = []
+        curr = start_date
+        while curr <= end_date:
+            heatmap_data.append({"date": curr.isoformat(), "count": date_counts.get(curr, 0)})
+            curr += timedelta(days=1)
+
+        # Pipeline Trend (Last 30 days)
+        trend_start = end_date - timedelta(days=29)
+        job_dates = Job.objects.filter(user=user, created_at__date__gte=trend_start).values_list('created_at__date', flat=True)
+        job_counts = collections.Counter(job_dates)
+        pipeline_trend = []
+        curr = trend_start
+        while curr <= end_date:
+            pipeline_trend.append({"date": curr.isoformat(), "count": job_counts.get(curr, 0)})
+            curr += timedelta(days=1)
+
         risk_score = "LOW"
         if drop_rate > 60 and consistency < 20: risk_score = "HIGH"
         elif drop_rate > 40 or consistency < 40: risk_score = "MEDIUM"
@@ -275,7 +302,9 @@ class UserFullProfileView(APIView):
                 "daysActive": max(1, (timezone.now() - user.created_at).days),
                 "totalActions": len(timeline),
                 "activePipeline": active_jobs
-            }
+            },
+            "heatmapData": heatmap_data,
+            "pipelineTrend": pipeline_trend
         })
 
 class CreateRoleView(APIView):

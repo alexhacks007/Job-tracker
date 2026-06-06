@@ -46,7 +46,7 @@ const JobDetail = () => {
   useEffect(() => {
     const fetchJob = async () => {
       try {
-        const res = await fetch(`/api/jobs/${id}`, { headers: { Authorization: `Bearer ${token}` } });
+        const res = await fetch(`/api/jobs/${id}/`, { headers: { Authorization: `Bearer ${token}` } });
         if (res.ok) setJob(await res.json());
         else navigate('/jobs');
       } catch { toast.error('Cluster sync failed'); }
@@ -57,7 +57,7 @@ const JobDetail = () => {
 
   const handleUpdateJob = async (updatedData) => {
     try {
-      const res = await fetch(`/api/jobs/${id}`, {
+      const res = await fetch(`/api/jobs/${id}/`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

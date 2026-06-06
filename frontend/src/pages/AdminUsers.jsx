@@ -21,8 +21,8 @@ const AdminUsers = () => {
     try {
       setLoading(true);
       const [usersRes, rbacRes] = await Promise.all([
-        fetch('/api/rbac/users-activity', { headers: { Authorization: `Bearer ${token}` } }),
-        fetch('/api/rbac', { headers: { Authorization: `Bearer ${token}` } })
+        fetch('/api/rbac/users-activity/', { headers: { Authorization: `Bearer ${token}` } }),
+        fetch('/api/rbac/', { headers: { Authorization: `Bearer ${token}` } })
       ]);
       
       if (usersRes.ok && rbacRes.ok) {
@@ -50,7 +50,7 @@ const AdminUsers = () => {
     }
     
     try {
-      const res = await fetch('/api/rbac/users', {
+      const res = await fetch('/api/rbac/users/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -76,7 +76,7 @@ const AdminUsers = () => {
   const handleDeleteUser = async (id) => {
     if (!window.confirm("WARNING: Are you sure you want to terminate this account? All associated data will be completely wiped.")) return;
     try {
-      const res = await fetch(`/api/rbac/users/${id}`, {
+      const res = await fetch(`/api/rbac/users/${id}/`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });

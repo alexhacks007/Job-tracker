@@ -25,7 +25,7 @@ const AdminUserDetail = () => {
     
     const fetchData = async () => {
       try {
-        const res = await fetch(`/api/rbac/users/${id}/full-profile`, {
+        const res = await fetch(`/api/rbac/users/${id}/full-profile/`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (res.ok) {
@@ -46,7 +46,7 @@ const AdminUserDetail = () => {
 
   const handleSendNudge = async () => {
     try {
-      const res = await fetch(`/api/rbac/users/${id}/nudge`, {
+      const res = await fetch(`/api/rbac/users/${id}/nudge/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -59,7 +59,7 @@ const AdminUserDetail = () => {
       if (res.ok) {
         toast.success(`Nudge successfully delivered to identity sentinel`);
         // Refresh data to show in timeline
-        const refreshRes = await fetch(`/api/rbac/users/${id}/full-profile`, {
+        const refreshRes = await fetch(`/api/rbac/users/${id}/full-profile/`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (refreshRes.ok) setData(await refreshRes.json());

@@ -174,7 +174,7 @@ const JobDiscovery = () => {
           q: search || 'software engineer', 
           l: locationSearch || 'india' 
         });
-        const res = await fetch(`/api/jobs/local?${params.toString()}`, {
+        const res = await fetch(`/api/jobs/local/?${params.toString()}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (!res.ok) throw new Error('Local Sync Error');
@@ -193,7 +193,7 @@ const JobDiscovery = () => {
   const handleSaveToTracker = async (job) => {
     setSavingId(job.id);
     try {
-      const res = await fetch('/api/jobs', {
+      const res = await fetch('/api/jobs/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({
