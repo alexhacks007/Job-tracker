@@ -2,7 +2,7 @@ services:
   - type: web
     name: job-tracker-django
     runtime: python
-    buildCommand: "pip install -r requirements.txt && python manage.py migrate"
+    buildCommand: "pip install -r requirements.txt && python manage.py migrate && python manage.py collectstatic --noinput"
     startCommand: "gunicorn config.wsgi:application"
     envVars:
       - key: DATABASE_URL
@@ -11,3 +11,5 @@ services:
         generateValue: true
       - key: DEBUG
         value: "False"
+      - key: PYTHON_VERSION
+        value: "3.11.0"
