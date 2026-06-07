@@ -1,7 +1,7 @@
 {
   "routes": [
-    { "src": "/api/(.*)", "dest": "https://job-tracker-django.onrender.com/api/$1" },
-    { "src": "/media/(.*)", "dest": "https://job-tracker-django.onrender.com/media/$1" },
+    { "src": "/api/(.*)", "dest": "https://job-tracker-pro-1yvy.onrender.com/api/$1" },
+    { "src": "/media/(.*)", "dest": "https://job-tracker-pro-1yvy.onrender.com/media/$1" },
     { "handle": "filesystem" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
