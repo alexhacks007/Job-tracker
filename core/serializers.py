@@ -17,9 +17,11 @@ class UserSerializer(serializers.ModelSerializer):
         return obj.get_permissions()
 
 class RegisterSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source='username')
+
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'password', 'role')
+        fields = ('id', 'name', 'email', 'password', 'role')
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
