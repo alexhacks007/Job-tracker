@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Users, Search, Plus, UserPlus, Activity, Mail, LogIn, ExternalLink, CalendarDays, Trash2, Eye, X, ShieldAlert, List } from 'lucide-react';
 import toast from 'react-hot-toast';
+import LogoSpinner from '../components/LogoSpinner';
 
 const AdminUsers = () => {
   const { token } = useAuth();
@@ -141,9 +142,9 @@ const AdminUsers = () => {
            </div>
          </div>
 
-         {loading ? (
-             <div className="flex justify-center py-12"><div className="w-10 h-10 border-4 border-brand-indigo border-t-transparent rounded-full animate-spin"></div></div>
-         ) : (
+          {loading ? (
+             <LogoSpinner message="Loading user directory..." />
+          ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>

@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { motion } from 'framer-motion';
 import { Send, Users, Mail, Activity, Plus, Play, RefreshCw, Archive, CheckCircle, XCircle, Clock, AlertTriangle, ShieldCheck } from 'lucide-react';
 import toast from 'react-hot-toast';
+import LogoSpinner from '../components/LogoSpinner';
 
 const EmailCampaigns = () => {
   const { token } = useAuth();
@@ -360,24 +361,26 @@ const EmailCampaigns = () => {
   const filteredLogs = getFilteredLogs();
 
   if (loading) return (
-    <div className="flex items-center justify-center p-12"><div className="w-12 h-12 border-4 border-brand-indigo border-t-transparent rounded-full animate-spin"></div></div>
+    <div className="min-h-[70vh] w-full flex items-center justify-center">
+      <LogoSpinner size="lg" message="Loading outreach matrix..." />
+    </div>
   );
 
   return (
-    <div className="space-y-8 pb-12">
-      <div className="flex justify-between items-center">
+    <div className="space-y-6 md:space-y-8 pb-12">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl md:text-4xl font-bold text-white flex items-center gap-3">
-            <Mail className="text-brand-indigo" size={36} /> Bulk Outreach Platform
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white flex items-center gap-3">
+            <Mail className="text-brand-indigo shrink-0 w-7 h-7 md:w-9 md:h-9" /> Bulk Outreach Platform
           </h1>
-          <p className="text-slate-400 mt-2 font-medium">Automate, personalize, and track your job applications</p>
+          <p className="text-slate-400 mt-1 md:mt-2 text-sm md:text-base font-medium">Automate, personalize, and track your job applications</p>
         </div>
-        <button onClick={fetchData} className="btn-secondary flex items-center gap-2">
-          <RefreshCw size={18} /> Refresh
+        <button onClick={fetchData} className="btn-secondary flex items-center gap-2 w-fit py-2.5 px-4 rounded-xl text-sm font-bold">
+          <RefreshCw size={16} /> Refresh
         </button>
       </div>
 
-      <div className="flex gap-2 bg-white/5 p-1.5 rounded-2xl overflow-x-auto w-max">
+      <div className="flex gap-2 bg-white/5 p-1.5 rounded-2xl overflow-x-auto w-full max-w-full md:w-auto md:max-w-max no-scrollbar scroll-smooth">
         {[
           { id: 'campaigns', label: 'Campaigns Dashboard', icon: Activity },
           { id: 'templates', label: 'Email Templates', icon: Archive },
@@ -386,72 +389,71 @@ const EmailCampaigns = () => {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold text-sm transition-all whitespace-nowrap ${activeTab === tab.id ? 'bg-brand-indigo text-white shadow-lg' : 'text-slate-400 hover:text-white'}`}
+            className={`flex items-center gap-2 px-4 md:px-6 py-2 md:py-2.5 rounded-xl font-bold text-xs md:text-sm transition-all whitespace-nowrap ${activeTab === tab.id ? 'bg-brand-indigo text-white shadow-lg' : 'text-slate-400 hover:text-white'}`}
           >
-            <tab.icon size={16} /> {tab.label}
+            <tab.icon size={14} className="md:w-4 md:h-4" /> {tab.label}
           </button>
         ))}
       </div>
 
       {/* Campaign Details Modal */}
-      {selectedCampaign && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+      {selectedCampaign && <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} onClick={() => setSelectedCampaign(null)}
             className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm" />
           <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-            className="relative w-full max-w-2xl bg-slate-900 border border-white/10 rounded-[2.5rem] shadow-2xl overflow-hidden">
-            <div className="p-8">
-               <div className="flex justify-between items-start mb-6">
+            className="relative w-full max-w-2xl bg-slate-900 border border-white/10 rounded-2xl sm:rounded-[2.5rem] shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+            <div className="p-5 sm:p-8 overflow-y-auto custom-scrollbar">
+               <div className="flex justify-between items-start mb-6 gap-4">
                   <div>
-                     <h2 className="text-2xl font-bold text-white">{selectedCampaign.name}</h2>
-                     <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1">
-                        <p className="text-slate-400 text-xs flex items-center gap-1"><Clock size={12} /> {new Date(selectedCampaign.created_at).toLocaleString()}</p>
-                        <p className="text-slate-400 text-xs flex items-center gap-1"><Mail size={12} /> {templates.find(t => t.id === selectedCampaign.template)?.name || 'Custom'}</p>
+                     <h2 className="text-xl sm:text-2xl font-bold text-white leading-tight">{selectedCampaign.name}</h2>
+                     <div className="flex flex-wrap gap-x-4 gap-y-1.5 mt-2">
+                        <p className="text-slate-400 text-xs flex items-center gap-1"><Clock size={12} className="shrink-0" /> {new Date(selectedCampaign.created_at).toLocaleString()}</p>
+                        <p className="text-slate-400 text-xs flex items-center gap-1"><Mail size={12} className="shrink-0" /> {templates.find(t => t.id === selectedCampaign.template)?.name || 'Custom'}</p>
                      </div>
                   </div>
-                  <button onClick={() => setSelectedCampaign(null)} className="p-2 hover:bg-white/5 rounded-full text-slate-400 transition-colors">
-                     <XCircle size={24} />
+                  <button onClick={() => setSelectedCampaign(null)} className="p-1.5 hover:bg-white/5 rounded-full text-slate-400 transition-colors shrink-0">
+                     <XCircle size={22} className="sm:w-6 sm:h-6" />
                   </button>
                </div>
 
-               <div className="grid grid-cols-4 gap-4 mb-8">
-                  <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl text-center">
-                     <p className="text-2xl font-black text-emerald-400">{selectedCampaign.total_sent}</p>
-                     <p className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">Sent</p>
+               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
+                  <div className="p-3 sm:p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl sm:rounded-2xl text-center">
+                     <p className="text-xl sm:text-2xl font-black text-emerald-400">{selectedCampaign.total_sent}</p>
+                     <p className="text-[9px] sm:text-[10px] font-bold text-emerald-500 uppercase tracking-widest">Sent</p>
                   </div>
-                  <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-2xl text-center">
-                     <p className="text-2xl font-black text-rose-400">{selectedCampaign.total_failed}</p>
-                     <p className="text-[10px] font-bold text-rose-500 uppercase tracking-widest">Failed</p>
+                  <div className="p-3 sm:p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl sm:rounded-2xl text-center">
+                     <p className="text-xl sm:text-2xl font-black text-rose-400">{selectedCampaign.total_failed}</p>
+                     <p className="text-[9px] sm:text-[10px] font-bold text-rose-500 uppercase tracking-widest">Failed</p>
                   </div>
-                  <div className="p-4 bg-amber-500/10 border border-amber-500/20 rounded-2xl text-center">
-                     <p className="text-2xl font-black text-amber-500">{selectedCampaign.total_invalid || 0}</p>
-                     <p className="text-[10px] font-bold text-amber-500 uppercase tracking-widest">Invalid</p>
+                  <div className="p-3 sm:p-4 bg-amber-500/10 border border-amber-500/20 rounded-xl sm:rounded-2xl text-center">
+                     <p className="text-xl sm:text-2xl font-black text-amber-500">{selectedCampaign.total_invalid || 0}</p>
+                     <p className="text-[9px] sm:text-[10px] font-bold text-amber-500 uppercase tracking-widest">Invalid</p>
                   </div>
-                  <div className="p-4 bg-white/5 border border-white/10 rounded-2xl text-center">
-                     <p className="text-2xl font-black text-white">{selectedCampaign.total_sent + selectedCampaign.total_failed + (selectedCampaign.total_invalid || 0)}</p>
-                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total</p>
+                  <div className="p-3 sm:p-4 bg-white/5 border border-white/10 rounded-xl sm:rounded-2xl text-center">
+                     <p className="text-xl sm:text-2xl font-black text-white">{selectedCampaign.total_sent + selectedCampaign.total_failed + (selectedCampaign.total_invalid || 0)}</p>
+                     <p className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total</p>
                   </div>
                </div>
 
-               <div className="space-y-4 max-h-[45vh] overflow-y-auto pr-2 custom-scrollbar">
+               <div className="space-y-3 max-h-[45vh] overflow-y-auto pr-1 custom-scrollbar">
                   {logs.filter(l => l.campaign === selectedCampaign.id).length === 0 ? (
                     <div className="text-center py-12 text-slate-500">No logs found for this campaign.</div>
                   ) : (
                     logs.filter(l => l.campaign === selectedCampaign.id).map(log => (
-                      <div key={log.id} className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5">
-                         <div>
-                            <p className="font-bold text-white text-sm">{log.company_name}</p>
-                            <p className="text-xs text-slate-500">{log.recipient_email}</p>
+                      <div key={log.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 sm:p-4 bg-white/5 rounded-xl sm:rounded-2xl border border-white/5 gap-2">
+                         <div className="min-w-0">
+                            <p className="font-bold text-white text-sm truncate" title={log.company_name}>{log.company_name}</p>
+                            <p className="text-xs text-slate-500 truncate" title={log.recipient_email}>{log.recipient_email}</p>
                          </div>
-                         <div className="flex flex-col items-end gap-1">
-                            <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                         <div className="flex sm:flex-col items-start sm:items-end justify-between sm:justify-end gap-1.5 border-t border-white/5 pt-2 sm:border-t-0 sm:pt-0">
+                            <span className={`px-2.5 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold uppercase tracking-wider whitespace-nowrap ${
                                log.status === 'Sent' ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' : 
                                log.status === 'Failed' ? 'bg-rose-500/10 text-rose-500 border border-rose-500/20' : 
                                'bg-amber-500/10 text-amber-500 border border-amber-500/20'
                             }`}>
                                {log.status}
                             </span>
-                            {log.error_message && <p className="text-[10px] text-rose-400 max-w-[150px] truncate" title={log.error_message}>{log.error_message}</p>}
+                            {log.error_message && <p className="text-[9px] sm:text-[10px] text-rose-400 max-w-[200px] truncate" title={log.error_message}>{log.error_message}</p>}
                          </div>
                       </div>
                     ))
@@ -459,13 +461,12 @@ const EmailCampaigns = () => {
                </div>
             </div>
           </motion.div>
-        </div>
-      )}
+        </div>}
 
       {activeTab === 'campaigns' && (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-1 space-y-6">
-             <div className="glass-card p-6 border-t-4 border-emerald-500">
+             <div className="glass-card p-4 sm:p-6 border-t-4 border-emerald-500">
                 <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2"><Play className="text-emerald-500"/> Launch Campaign</h3>
                 <form onSubmit={handleCreateCampaign} className="space-y-4">
                   <div>
@@ -488,7 +489,7 @@ const EmailCampaigns = () => {
                     <div className="bg-slate-900/50 border border-slate-700 rounded-xl p-3 mb-2 space-y-3">
                        <input type="text" className="w-full bg-black/20 border border-slate-700 rounded-lg p-2 text-sm text-white focus:border-brand-indigo outline-none" placeholder="Search by name or email..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
                        
-                       <div className="grid grid-cols-2 gap-2">
+                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                          <select className="bg-black/20 border border-slate-700 rounded-lg p-2 text-sm text-white focus:border-brand-indigo outline-none" value={locationFilter} onChange={e => setLocationFilter(e.target.value)}>
                             <option value="">All Locations</option>
                             {uniqueLocations.map(loc => <option key={loc} value={loc}>{loc}</option>)}
@@ -535,15 +536,15 @@ const EmailCampaigns = () => {
                          const lastContact = companyLastContact[c.id];
                          return (
                            <div key={c.id} className="flex items-center gap-3 p-2 hover:bg-white/5 rounded-lg cursor-pointer transition-colors" onClick={() => toggleCompanySelection(c.id)}>
-                             <input type="checkbox" checked={newCampaign.selectedCompanies.includes(c.id)} readOnly className="accent-emerald-500 w-4 h-4" />
-                             <div className="flex-1">
-                               <p className="text-sm text-white font-medium flex justify-between">
-                                  {c.name}
-                                  {lastContact && <span className="text-[10px] text-slate-500 font-mono">Last: {lastContact.toLocaleDateString()}</span>}
-                               </p>
-                               <div className="flex justify-between items-center">
-                                 <p className="text-xs text-slate-400 flex items-center gap-1">
-                                   {c.email}
+                             <input type="checkbox" checked={newCampaign.selectedCompanies.includes(c.id)} readOnly className="accent-emerald-500 w-4 h-4 shrink-0" />
+                             <div className="flex-1 min-w-0">
+                               <div className="flex items-start justify-between gap-2">
+                                 <p className="text-sm text-white font-semibold truncate" title={c.name}>{c.name}</p>
+                                 {lastContact && <span className="text-[10px] text-slate-500 font-mono shrink-0">Last: {lastContact.toLocaleDateString()}</span>}
+                               </div>
+                               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mt-0.5">
+                                 <p className="text-xs text-slate-400 flex items-center gap-1 truncate min-w-0">
+                                   <span className="truncate max-w-[120px] xs:max-w-[160px] sm:max-w-none">{c.email}</span>
                                    {(() => {
                                       const verification = verifyingEmails[c.email];
                                       if (verification?.status === 'loading') return <RefreshCw size={10} className="animate-spin text-brand-indigo" />;
@@ -563,9 +564,9 @@ const EmailCampaigns = () => {
                                       );
                                    })()}
                                  </p>
-                                 <div className="flex gap-1">
-                                    {c.company_size && <p className="text-[10px] text-brand-indigo bg-brand-indigo/10 px-1.5 py-0.5 rounded">{c.company_size}</p>}
-                                    <p className="text-[10px] text-slate-500 bg-black/30 px-1.5 py-0.5 rounded">{c.address || 'Remote'}</p>
+                                 <div className="flex gap-1 items-center shrink-0">
+                                    {c.company_size && <span className="text-[9px] font-bold text-brand-indigo bg-brand-indigo/10 px-1.5 py-0.5 rounded">{c.company_size}</span>}
+                                    <span className="text-[9px] font-bold text-slate-400 bg-black/30 px-1.5 py-0.5 rounded truncate max-w-[80px]" title={c.address || 'Remote'}>{c.address?.split(',').pop().trim() || 'Remote'}</span>
                                  </div>
                                </div>
                              </div>
@@ -590,28 +591,28 @@ const EmailCampaigns = () => {
                 ) : (
                   <div className="grid grid-cols-1 gap-4">
                     {campaigns.map(c => (
-                      <div key={c.id} onClick={() => setSelectedCampaign(c)} className="glass p-6 rounded-[2rem] border border-white/5 flex items-center justify-between group hover:border-brand-indigo/30 transition-all cursor-pointer">
-                        <div className="flex items-center gap-6">
+                      <div key={c.id} onClick={() => setSelectedCampaign(c)} className="glass p-4 sm:p-6 rounded-2xl sm:rounded-[2rem] border border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-4 group hover:border-brand-indigo/30 transition-all cursor-pointer">
+                        <div className="flex items-center gap-4 sm:gap-6">
                           <div>
-                            <h4 className="text-lg font-bold text-white">{c.name}</h4>
-                            <p className="text-sm text-slate-400">Started on {new Date(c.created_at).toLocaleDateString()}</p>
+                            <h4 className="text-base sm:text-lg font-bold text-white group-hover:text-brand-indigo transition-colors truncate max-w-[200px] xs:max-w-xs sm:max-w-none">{c.name}</h4>
+                            <p className="text-xs sm:text-sm text-slate-400">Started on {new Date(c.created_at).toLocaleDateString()}</p>
                           </div>
                         </div>
-                        <div className="flex items-center gap-6">
-                           <div className="text-center">
-                              <p className="text-2xl font-black text-emerald-400">{c.total_sent}</p>
-                              <p className="text-xs text-slate-500 uppercase tracking-wider font-bold">Sent</p>
+                        <div className="flex items-center justify-between md:justify-end gap-3 sm:gap-6 border-t border-white/5 pt-3 md:border-t-0 md:pt-0">
+                           <div className="text-center min-w-[45px] sm:min-w-[60px]">
+                              <p className="text-lg sm:text-2xl font-black text-emerald-400">{c.total_sent}</p>
+                              <p className="text-[10px] sm:text-xs text-slate-500 uppercase tracking-wider font-bold">Sent</p>
                            </div>
-                           <div className="text-center">
-                              <p className="text-2xl font-black text-red-400">{c.total_failed}</p>
-                              <p className="text-xs text-slate-500 uppercase tracking-wider font-bold">Failed</p>
+                           <div className="text-center min-w-[45px] sm:min-w-[60px]">
+                              <p className="text-lg sm:text-2xl font-black text-rose-400">{c.total_failed}</p>
+                              <p className="text-[10px] sm:text-xs text-slate-500 uppercase tracking-wider font-bold">Failed</p>
                            </div>
-                           <div className="text-center">
-                              <p className="text-2xl font-black text-amber-500">{c.total_invalid || 0}</p>
-                              <p className="text-xs text-slate-500 uppercase tracking-wider font-bold">Invalid</p>
+                           <div className="text-center min-w-[45px] sm:min-w-[60px]">
+                              <p className="text-lg sm:text-2xl font-black text-amber-500">{c.total_invalid || 0}</p>
+                              <p className="text-[10px] sm:text-xs text-slate-500 uppercase tracking-wider font-bold">Invalid</p>
                            </div>
-                           <div className="text-center">
-                              <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${c.status === 'Running' ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30' : c.status === 'Completed' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-slate-500/20 text-slate-400 border border-slate-500/30'}`}>
+                           <div className="text-center min-w-[60px] sm:min-w-auto">
+                              <span className={`px-2.5 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider whitespace-nowrap block ${c.status === 'Running' ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30' : c.status === 'Completed' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-slate-500/20 text-slate-400 border border-slate-500/30'}`}>
                                 {c.status}
                               </span>
                            </div>
@@ -625,11 +626,10 @@ const EmailCampaigns = () => {
         </motion.div>
       )}
 
-      {activeTab === 'templates' && (
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-           <div className="glass-card p-6">
+      {activeTab === 'templates' && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+           <div className="glass-card p-4 sm:p-6">
               <h3 className="text-xl font-bold text-white mb-6 flex items-center justify-between">
-                <span>{editingTemplateId ? 'Edit Template' : 'Create Template'}</span>
+                <span>{editingTemplateId ? 'Edit Email Template' : 'Create Email Template'}</span>
                 {editingTemplateId && (
                   <button type="button" onClick={() => { setEditingTemplateId(null); setNewTemplate({ name: '', subject: '', body: '' }); }} className="text-xs text-slate-400 hover:text-white px-3 py-1 bg-white/5 rounded-lg">Cancel Edit</button>
                 )}
@@ -640,9 +640,9 @@ const EmailCampaigns = () => {
                     <input required type="text" className="w-full bg-slate-900/50 border border-slate-700 rounded-xl p-3 text-white focus:border-brand-indigo outline-none" value={newTemplate.name} onChange={e => setNewTemplate({...newTemplate, name: e.target.value})} placeholder="e.g. Standard Developer Pitch" />
                  </div>
                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-1 flex justify-between items-center">
+                    <label className="block text-sm font-medium text-slate-300 mb-1 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
                        <span>Email Subject</span>
-                       <div className="flex gap-1">
+                       <div className="flex flex-wrap gap-1">
                           {AVAILABLE_VARIABLES.map(v => (
                              <button key={'subj-'+v.tag} type="button" onClick={() => insertVariable('subject', v.tag)} className="text-[10px] bg-brand-indigo/20 text-brand-indigo px-1.5 py-0.5 rounded hover:bg-brand-indigo hover:text-white transition-colors" title={`Insert ${v.label}`}>+ {v.label}</button>
                           ))}
@@ -651,9 +651,9 @@ const EmailCampaigns = () => {
                     <input required type="text" className="w-full bg-slate-900/50 border border-slate-700 rounded-xl p-3 text-white focus:border-brand-indigo outline-none" value={newTemplate.subject} onChange={e => setNewTemplate({...newTemplate, subject: e.target.value})} placeholder="Application for Software Engineer" />
                  </div>
                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-1 flex justify-between items-center">
+                    <label className="block text-sm font-medium text-slate-300 mb-1 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
                       <span>Body Content</span>
-                      <div className="flex gap-1">
+                      <div className="flex flex-wrap gap-1">
                           {AVAILABLE_VARIABLES.map(v => (
                              <button key={'body-'+v.tag} type="button" onClick={() => insertVariable('body', v.tag)} className="text-[10px] bg-brand-indigo/20 text-brand-indigo px-1.5 py-0.5 rounded hover:bg-brand-indigo hover:text-white transition-colors" title={`Insert ${v.label}`}>+ {v.label}</button>
                           ))}
@@ -678,103 +678,147 @@ const EmailCampaigns = () => {
                  </button>
               </form>
            </div>
-           <div className="glass-card p-6">
-             <h3 className="text-xl font-bold text-white mb-6">Saved Templates</h3>
-             <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2">
-                {templates.length === 0 ? (
-                   <p className="text-slate-500 italic text-center p-8">No templates saved yet.</p>
-                ) : templates.map(t => (
-                  <div key={t.id} className="p-4 border border-white/5 bg-slate-900/40 rounded-xl hover:bg-white/5 transition-colors group relative">
-                     <div className="absolute top-4 right-4 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button onClick={() => handleEditClick(t)} className="text-xs font-bold text-brand-indigo hover:text-white px-3 py-1 bg-brand-indigo/10 rounded-lg">Edit</button>
-                        <button onClick={() => handleDeleteTemplate(t.id)} className="text-xs font-bold text-red-400 hover:text-white px-3 py-1 bg-red-500/10 rounded-lg">Delete</button>
+           <div className="glass-card p-4 sm:p-6">
+              <h3 className="text-xl font-bold text-white mb-6">Saved Templates</h3>
+              <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
+                 {templates.length === 0 ? (
+                    <p className="text-slate-500 italic text-center p-8">No templates saved yet.</p>
+                 ) : templates.map(t => (
+                   <div key={t.id} className="p-4 border border-white/5 bg-slate-900/40 rounded-xl hover:bg-white/5 transition-colors group relative flex flex-col md:block">
+                      <div className="flex justify-between items-start gap-4 mb-2 md:mb-0">
+                         <h4 className="font-bold text-brand-indigo md:pr-32 break-all">{t.name}</h4>
+                         <div className="flex items-center gap-2 md:opacity-0 md:group-hover:opacity-100 transition-opacity shrink-0 md:absolute md:top-4 md:right-4">
+                            <button onClick={() => handleEditClick(t)} className="text-xs font-bold text-brand-indigo hover:text-white px-2.5 py-1 bg-brand-indigo/10 rounded-lg">Edit</button>
+                            <button onClick={() => handleDeleteTemplate(t.id)} className="text-xs font-bold text-red-400 hover:text-white px-2.5 py-1 bg-red-500/10 rounded-lg">Delete</button>
+                         </div>
+                      </div>
+                      <p className="text-sm text-slate-300 mb-3 font-medium border-b border-white/5 pb-2">Subject: {t.subject}</p>
+                      <p className="text-xs text-slate-400 whitespace-pre-wrap font-mono">{t.body}</p>
+                      {t.resume && (
+                         <div className="mt-3 flex items-center gap-2 p-2 bg-emerald-500/10 border border-emerald-500/20 rounded-lg w-fit">
+                            <CheckCircle size={14} className="text-emerald-500" />
+                            <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-wider">Resume Attached</span>
+                            <a href={t.resume} target="_blank" rel="noopener noreferrer" className="ml-2 text-[10px] text-brand-indigo hover:underline">View File</a>
+                         </div>
+                      )}
+                   </div>
+                 ))}
+              </div>
+           </div>
+        </motion.div>}
+
+      {activeTab === 'history' && (
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-4 sm:p-6">
+           <div className="flex justify-between items-center mb-6">
+              <h3 className="text-lg sm:text-xl font-bold text-white">Outreach Tracking Logs</h3>
+              <span className="text-xs sm:text-sm font-bold text-emerald-500 bg-emerald-500/10 px-3 py-1 rounded-full">{filteredLogs.length} Records</span>
+           </div>
+           
+           <div className="flex flex-col md:flex-row gap-4 mb-6 bg-slate-900/50 p-4 rounded-xl border border-slate-700">
+             <input type="text" placeholder="Search company, email, or template..." className="w-full md:flex-1 bg-black/20 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:border-brand-indigo outline-none" value={logSearch} onChange={e => setLogSearch(e.target.value)} />
+             
+             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 w-full md:w-auto">
+               <select className="w-full bg-black/20 border border-slate-700 rounded-lg p-2 text-sm text-white focus:border-brand-indigo outline-none min-w-[140px]" value={logLocationFilter} onChange={e => setLogLocationFilter(e.target.value)}>
+                  <option value="">All Locations</option>
+                  {uniqueLogLocations.map(loc => <option key={loc} value={loc}>{loc}</option>)}
+               </select>
+
+               <select className="w-full bg-black/20 border border-slate-700 rounded-lg p-2 text-sm text-white focus:border-brand-indigo outline-none min-w-[140px]" value={logStatusFilter} onChange={e => setLogStatusFilter(e.target.value)}>
+                  <option value="all">All Statuses</option>
+                  <option value="Sent">Sent</option>
+                  <option value="Pending">Pending</option>
+                  <option value="Failed">Failed</option>
+                  <option value="Invalid">Invalid</option>
+               </select>
+
+               <select className="w-full bg-black/20 border border-slate-700 rounded-lg p-2 text-sm text-white focus:border-brand-indigo outline-none min-w-[140px]" value={logDateFilter} onChange={e => setLogDateFilter(e.target.value)}>
+                  <option value="all">All Time</option>
+                  <option value="today">Today</option>
+                  <option value="last_7_days">Last 7 Days</option>
+                  <option value="last_30_days">Last 30 Days</option>
+               </select>
+             </div>
+           </div>
+
+           {/* Desktop Table View */}
+           <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-left">
+                 <thead>
+                    <tr>
+                       <th className="p-4 text-sm font-bold text-slate-400 border-b border-white/10 uppercase bg-white/5 rounded-tl-xl">Company</th>
+                       <th className="p-4 text-sm font-bold text-slate-400 border-b border-white/10 uppercase bg-white/5">Target Email</th>
+                       <th className="p-4 text-sm font-bold text-slate-400 border-b border-white/10 uppercase bg-white/5">Template</th>
+                       <th className="p-4 text-sm font-bold text-slate-400 border-b border-white/10 uppercase bg-white/5">Status</th>
+                       <th className="p-4 text-sm font-bold text-slate-400 border-b border-white/10 uppercase bg-white/5 rounded-tr-xl">Sent At</th>
+                    </tr>
+                 </thead>
+                 <tbody>
+                    {filteredLogs.length === 0 ? (
+                      <tr><td colSpan="5" className="p-8 text-center text-slate-500">No email logs match your filters.</td></tr>
+                    ) : filteredLogs.map(log => (
+                      <tr key={log.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                         <td className="p-4 text-sm text-white font-medium">{log.company_name}</td>
+                         <td className="p-4 text-sm text-slate-300">{log.recipient_email}</td>
+                         <td className="p-4 text-sm text-brand-indigo">{log.template_name}</td>
+                         <td className="p-4">
+                            {log.status === 'Sent' ? <span className="flex items-center gap-1 text-emerald-400 text-xs font-bold"><CheckCircle size={14}/> SENT</span> :
+                             log.status === 'Pending' ? <span className="flex items-center gap-1 text-orange-400 text-xs font-bold"><Clock size={14}/> PENDING</span> :
+                             log.status === 'Invalid' ? (
+                               <div className="flex flex-col gap-1">
+                                 <span className="flex items-center gap-1 text-amber-400 text-xs font-bold"><AlertTriangle size={14}/> INVALID</span>
+                                 <button onClick={() => handleMarkInvalid(log.company)} className="text-[9px] text-slate-500 hover:text-white underline text-left font-semibold">Blacklist Contact</button>
+                               </div>
+                             ) : (
+                               <div className="flex flex-col gap-1">
+                                 <span className="flex items-center gap-1 text-red-400 text-xs font-bold"><XCircle size={14}/> FAILED</span>
+                                 <button onClick={() => handleMarkInvalid(log.company)} className="text-[9px] text-slate-500 hover:text-white underline text-left font-semibold">Blacklist Contact</button>
+                               </div>
+                             )}
+                         </td>
+                         <td className="p-4 text-sm text-slate-400">{log.sent_at ? new Date(log.sent_at).toLocaleString() : '-'}</td>
+                      </tr>
+                    ))}
+                 </tbody>
+              </table>
+           </div>
+
+           {/* Mobile Card View */}
+           <div className="space-y-4 md:hidden">
+              {filteredLogs.length === 0 ? (
+                <div className="text-center py-12 text-slate-500 text-sm">No email logs match your filters.</div>
+              ) : (
+                filteredLogs.map(log => (
+                  <div key={'mob-log-'+log.id} className="p-4 bg-white/5 rounded-xl border border-white/5 space-y-3">
+                     <div className="flex justify-between items-start">
+                        <div className="min-w-0">
+                           <p className="font-bold text-white text-sm truncate" title={log.company_name}>{log.company_name}</p>
+                           <p className="text-xs text-slate-400 font-medium truncate" title={log.recipient_email}>{log.recipient_email}</p>
+                        </div>
+                        <div className="shrink-0">
+                           {log.status === 'Sent' ? <span className="flex items-center gap-1 text-emerald-400 text-[10px] font-bold uppercase tracking-wider"><CheckCircle size={12}/> SENT</span> :
+                            log.status === 'Pending' ? <span className="flex items-center gap-1 text-orange-400 text-[10px] font-bold uppercase tracking-wider"><Clock size={12}/> PENDING</span> :
+                            log.status === 'Invalid' ? <span className="flex items-center gap-1 text-amber-400 text-[10px] font-bold uppercase tracking-wider"><AlertTriangle size={12}/> INVALID</span> :
+                            <span className="flex items-center gap-1 text-red-400 text-[10px] font-bold uppercase tracking-wider"><XCircle size={12}/> FAILED</span>}
+                        </div>
                      </div>
-                     <h4 className="font-bold text-brand-indigo mb-1 pr-32">{t.name}</h4>
-                     <p className="text-sm text-slate-300 mb-3 font-medium border-b border-white/5 pb-2">Subject: {t.subject}</p>
-                     <p className="text-xs text-slate-400 whitespace-pre-wrap font-mono">{t.body}</p>
-                     {t.resume && (
-                        <div className="mt-3 flex items-center gap-2 p-2 bg-emerald-500/10 border border-emerald-500/20 rounded-lg w-fit">
-                           <CheckCircle size={14} className="text-emerald-500" />
-                           <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-wider">Resume Attached</span>
-                           <a href={t.resume} target="_blank" rel="noopener noreferrer" className="ml-2 text-[10px] text-brand-indigo hover:underline">View File</a>
+                     <div className="flex justify-between items-center text-[11px] border-t border-white/5 pt-2">
+                        <div className="truncate pr-4">
+                           <span className="text-slate-500">Template:</span> <span className="text-brand-indigo font-bold">{log.template_name}</span>
+                        </div>
+                        <div className="text-slate-500 shrink-0">
+                           {log.sent_at ? new Date(log.sent_at).toLocaleDateString() : '-'}
+                        </div>
+                     </div>
+                     {(log.status === 'Invalid' || log.status === 'Failed') && (
+                        <div className="flex justify-between items-center bg-black/20 p-2 rounded-lg gap-2 mt-2">
+                           <span className="text-[10px] text-rose-400/90 truncate">{log.error_message || 'Delivery failure'}</span>
+                           <button onClick={() => handleMarkInvalid(log.company)} className="text-[9px] text-slate-400 hover:text-white underline shrink-0 font-bold">Blacklist</button>
                         </div>
                      )}
                   </div>
-                ))}
-             </div>
+                ))
+              )}
            </div>
-        </motion.div>
-      )}
-
-      {activeTab === 'history' && (
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-6 overflow-x-auto">
-           <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-bold text-white">Outreach Tracking Logs</h3>
-              <span className="text-sm font-bold text-emerald-500 bg-emerald-500/10 px-3 py-1 rounded-full">{filteredLogs.length} Records</span>
-           </div>
-           
-           <div className="flex flex-col md:flex-row gap-4 mb-6 bg-slate-900/50 p-4 rounded-xl border border-slate-700 flex-wrap">
-             <input type="text" placeholder="Search company, email, or template..." className="flex-1 min-w-[200px] bg-black/20 border border-slate-700 rounded-lg p-2 text-sm text-white focus:border-brand-indigo outline-none" value={logSearch} onChange={e => setLogSearch(e.target.value)} />
-             
-             <select className="bg-black/20 border border-slate-700 rounded-lg p-2 text-sm text-white focus:border-brand-indigo outline-none min-w-[150px]" value={logLocationFilter} onChange={e => setLogLocationFilter(e.target.value)}>
-                <option value="">All Locations</option>
-                {uniqueLogLocations.map(loc => <option key={loc} value={loc}>{loc}</option>)}
-             </select>
-
-             <select className="bg-black/20 border border-slate-700 rounded-lg p-2 text-sm text-white focus:border-brand-indigo outline-none min-w-[150px]" value={logStatusFilter} onChange={e => setLogStatusFilter(e.target.value)}>
-                <option value="all">All Statuses</option>
-                <option value="Sent">Sent</option>
-                <option value="Pending">Pending</option>
-                <option value="Failed">Failed</option>
-                <option value="Invalid">Invalid</option>
-             </select>
-
-             <select className="bg-black/20 border border-slate-700 rounded-lg p-2 text-sm text-white focus:border-brand-indigo outline-none min-w-[150px]" value={logDateFilter} onChange={e => setLogDateFilter(e.target.value)}>
-                <option value="all">All Time</option>
-                <option value="today">Today</option>
-                <option value="last_7_days">Last 7 Days</option>
-                <option value="last_30_days">Last 30 Days</option>
-             </select>
-           </div>
-
-           <table className="w-full text-left">
-              <thead>
-                 <tr>
-                    <th className="p-4 text-sm font-bold text-slate-400 border-b border-white/10 uppercase bg-white/5 rounded-tl-xl">Company</th>
-                    <th className="p-4 text-sm font-bold text-slate-400 border-b border-white/10 uppercase bg-white/5">Target Email</th>
-                    <th className="p-4 text-sm font-bold text-slate-400 border-b border-white/10 uppercase bg-white/5">Template</th>
-                    <th className="p-4 text-sm font-bold text-slate-400 border-b border-white/10 uppercase bg-white/5">Status</th>
-                    <th className="p-4 text-sm font-bold text-slate-400 border-b border-white/10 uppercase bg-white/5 rounded-tr-xl">Sent At</th>
-                 </tr>
-              </thead>
-              <tbody>
-                 {filteredLogs.length === 0 ? (
-                   <tr><td colSpan="5" className="p-8 text-center text-slate-500">No email logs match your filters.</td></tr>
-                 ) : filteredLogs.map(log => (
-                   <tr key={log.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-sm text-white font-medium">{log.company_name}</td>
-                      <td className="p-4 text-sm text-slate-300">{log.recipient_email}</td>
-                      <td className="p-4 text-sm text-brand-indigo">{log.template_name}</td>
-                      <td className="p-4">
-                         {log.status === 'Sent' ? <span className="flex items-center gap-1 text-emerald-400 text-xs font-bold"><CheckCircle size={14}/> SENT</span> :
-                          log.status === 'Pending' ? <span className="flex items-center gap-1 text-orange-400 text-xs font-bold"><Clock size={14}/> PENDING</span> :
-                                                    log.status === 'Invalid' ? (
-                            <div className="flex flex-col gap-1">
-                              <span className="flex items-center gap-1 text-amber-400 text-xs font-bold"><AlertTriangle size={14}/> INVALID</span>
-                              <button onClick={() => handleMarkInvalid(log.company)} className="text-[9px] text-slate-500 hover:text-white underline text-left">Blacklist Contact</button>
-                            </div>
-                          ) : (
-                            <div className="flex flex-col gap-1">
-                              <span className="flex items-center gap-1 text-red-400 text-xs font-bold"><XCircle size={14}/> FAILED</span>
-                              <button onClick={() => handleMarkInvalid(log.company)} className="text-[9px] text-slate-500 hover:text-white underline text-left">Blacklist Contact</button>
-                            </div>
-                          )}
-                      </td>
-                      <td className="p-4 text-sm text-slate-400">{log.sent_at ? new Date(log.sent_at).toLocaleString() : '-'}</td>
-                   </tr>
-                 ))}
-              </tbody>
-           </table>
         </motion.div>
       )}
     </div>

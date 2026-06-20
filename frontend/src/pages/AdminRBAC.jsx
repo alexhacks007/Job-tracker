@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Shield, ShieldAlert, Check, Users, Key, Activity, Plus, Trash2, ShieldCheck, Database } from 'lucide-react';
 import toast from 'react-hot-toast';
+import LogoSpinner from '../components/LogoSpinner';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
 
 const AdminRBAC = () => {
@@ -134,8 +135,8 @@ const AdminRBAC = () => {
   };
 
   if (loading || !analytics) return (
-    <div className="flex items-center justify-center p-12 text-slate-400">
-      <div className="w-12 h-12 border-4 border-brand-indigo border-t-transparent rounded-full animate-spin"></div>
+    <div className="min-h-[70vh] w-full flex items-center justify-center">
+      <LogoSpinner size="lg" message="Loading security matrix..." />
     </div>
   );
 

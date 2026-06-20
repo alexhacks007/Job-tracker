@@ -92,15 +92,15 @@ const Jobs = () => {
     <div className="space-y-8 pb-12">
       
       {/* Dynamic Header */}
-      <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
         <div>
-          <h1 className="text-3xl font-bold text-white tracking-tight">Job Applications</h1>
-          <p className="text-slate-400 mt-1">Manage and track your active opportunities.</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Job Applications</h1>
+          <p className="text-slate-400 mt-1 text-sm sm:text-base">Manage and track your active opportunities.</p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3 w-full xl:w-auto">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto">
            {/* Search */}
-           <div className="relative flex-1 min-w-[300px] group">
+           <div className="relative flex-1 sm:min-w-[300px] group">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-focus-within:text-brand-indigo transition-colors" />
               <input 
                 type="text" 
@@ -111,38 +111,40 @@ const Jobs = () => {
               />
            </div>
 
-           {/* View Switcher */}
-           <div className="flex bg-white/5 p-1 rounded-2xl border border-white/5">
-              <button 
-                onClick={() => setViewMode('grid')}
-                className={`p-2 rounded-xl transition-all ${viewMode === 'grid' ? 'bg-brand-indigo text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
+           <div className="flex items-center gap-3">
+              {/* View Switcher */}
+              <div className="flex bg-white/5 p-1 rounded-2xl border border-white/5 shrink-0">
+                 <button 
+                   onClick={() => setViewMode('grid')}
+                   className={`p-2 rounded-xl transition-all ${viewMode === 'grid' ? 'bg-brand-indigo text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
+                 >
+                    <LayoutGrid className="w-4 h-4" />
+                 </button>
+                 <button 
+                   onClick={() => setViewMode('list')}
+                   className={`p-2 rounded-xl transition-all ${viewMode === 'list' ? 'bg-brand-indigo text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
+                 >
+                    <List className="w-4 h-4" />
+                 </button>
+              </div>
+
+              <button
+                onClick={() => { setCurrentJob(null); setIsModalOpen(true); }}
+                className="btn-primary flex items-center gap-2 flex-1 sm:flex-none justify-center whitespace-nowrap text-xs py-3 px-6 rounded-2xl"
               >
-                 <LayoutGrid className="w-4 h-4" />
-              </button>
-              <button 
-                onClick={() => setViewMode('list')}
-                className={`p-2 rounded-xl transition-all ${viewMode === 'list' ? 'bg-brand-indigo text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
-              >
-                 <List className="w-4 h-4" />
+                <Plus className="w-4 h-4 sm:w-5 sm:h-5" /> Add New Job
               </button>
            </div>
-
-           <button
-             onClick={() => { setCurrentJob(null); setIsModalOpen(true); }}
-             className="btn-primary flex items-center gap-2"
-           >
-             <Plus className="w-5 h-5" /> Add New Job
-           </button>
         </div>
       </div>
 
       {/* Categories / Filter Pills */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-4 no-scrollbar">
+      <div className="flex items-center gap-2 overflow-x-auto pb-2 mb-2 no-scrollbar w-full border-b border-white/5">
          {categories.map(cat => (
            <button
              key={cat}
              onClick={() => setFilterStatus(cat)}
-             className={`px-5 py-2 rounded-full text-xs font-bold whitespace-nowrap border transition-all ${
+             className={`px-4 sm:px-5 py-2 rounded-full text-xs font-bold whitespace-nowrap border transition-all ${
                filterStatus === cat 
                ? 'bg-brand-indigo text-white border-brand-indigo shadow-lg shadow-brand-indigo/20' 
                : 'bg-white/5 text-slate-400 border-white/5 hover:border-white/10 hover:text-slate-200'
@@ -151,7 +153,7 @@ const Jobs = () => {
              {cat} {cat !== 'All' && `(${jobs.filter(j => j.status === cat).length})`}
            </button>
          ))}
-         <div className="ml-auto flex items-center gap-2 px-4 py-2 border-l border-white/10">
+         <div className="ml-auto hidden sm:flex items-center gap-2 pl-4 py-2 border-l border-white/10 shrink-0">
             <SlidersHorizontal className="w-4 h-4 text-slate-500" />
             <span className="text-xs font-bold text-slate-500">Filters</span>
          </div>
@@ -159,14 +161,14 @@ const Jobs = () => {
 
       {/* Main Content Area */}
       {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 sm:gap-8">
            {[...Array(6)].map((_, i) => (
              <Skeleton key={i} className="h-64 rounded-[2.5rem]" />
            ))}
         </div>
       ) : (
         <div className={viewMode === 'grid' 
-          ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" 
+          ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 sm:gap-8" 
           : "space-y-4"
         }>
           <AnimatePresence mode="popLayout">

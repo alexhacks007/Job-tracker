@@ -309,43 +309,43 @@ const Companies = () => {
 
       {/* Header */}
       <div className="flex flex-col gap-6">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 md:gap-6">
           <div>
-            <h1 className="text-3xl font-bold text-white tracking-tight">Organization Directory</h1>
-            <p className="text-slate-400 mt-1">Keep track of key players and contacts.</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Organization Directory</h1>
+            <p className="text-slate-400 mt-1 text-sm sm:text-base">Keep track of key players and contacts.</p>
           </div>
           
-          <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full lg:w-auto">
               <button onClick={() => { setCurrent(null); setModalOpen(true); }}
-                className="btn-primary flex items-center gap-2 whitespace-nowrap">
-                <Plus size={20} /> Add Company
+                className="btn-primary flex-1 sm:flex-none flex items-center justify-center gap-2 whitespace-nowrap text-xs py-3 px-5 rounded-2xl">
+                <Plus size={16} /> Add Company
               </button>
               <button onClick={() => setIsBulkModalOpen(true)}
-                className="btn-secondary flex items-center gap-2 whitespace-nowrap bg-brand-indigo/10 text-brand-indigo hover:bg-brand-indigo/20 border border-brand-indigo/30">
-                <Upload size={20} /> Bulk Upload
+                className="btn-secondary flex-1 sm:flex-none flex items-center justify-center gap-2 whitespace-nowrap text-xs py-3 px-5 rounded-2xl bg-brand-indigo/10 text-brand-indigo hover:bg-brand-indigo/20 border border-brand-indigo/30">
+                <Upload size={16} /> Bulk Upload
               </button>
               <button onClick={handleExport}
-                className="btn-secondary flex items-center gap-2 whitespace-nowrap bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 border border-emerald-500/30">
-                <Download size={20} /> Export Excel
+                className="btn-secondary flex-1 sm:flex-none flex items-center justify-center gap-2 whitespace-nowrap text-xs py-3 px-5 rounded-2xl bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 border border-emerald-500/30">
+                <Download size={16} /> Export Excel
               </button>
           </div>
         </div>
 
         {/* Advance Filters */}
-        <div className="glass p-6 rounded-[2rem] border border-white/5 flex flex-col md:flex-row gap-4 items-center">
+        <div className="glass p-4 sm:p-6 rounded-2xl sm:rounded-[2rem] border border-white/5 flex flex-col xl:flex-row gap-4 items-stretch xl:items-center">
             <div className="relative flex-1 group w-full">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-focus-within:text-brand-indigo transition-colors" />
               <input type="text" placeholder="Search by name, site, or contact..." value={search} onChange={(e) => setSearch(e.target.value)}
                 className="w-full pl-12 pr-4 py-3 bg-white/5 border-white/5 rounded-2xl outline-none focus:ring-2 focus:ring-brand-indigo/20 transition-all text-sm text-white placeholder:text-slate-600" />
             </div>
 
-            <div className="flex flex-wrap gap-3 w-full md:w-auto">
-               <select value={locationFilter} onChange={e => setLocationFilter(e.target.value)} className="bg-slate-900 border border-white/10 rounded-xl p-3 text-sm text-white focus:ring-2 focus:ring-brand-indigo/20 outline-none min-w-[140px]">
+            <div className="grid grid-cols-2 sm:grid-cols-4 xl:flex xl:flex-row gap-2.5 sm:gap-3 w-full xl:w-auto">
+               <select value={locationFilter} onChange={e => setLocationFilter(e.target.value)} className="w-full xl:w-auto bg-slate-900 border border-white/10 rounded-xl p-2.5 text-xs sm:text-sm text-white focus:ring-2 focus:ring-brand-indigo/20 outline-none min-w-[120px]">
                   <option value="all">All Locations</option>
                   {uniqueLocations.map(loc => <option key={loc} value={loc}>{loc}</option>)}
                </select>
 
-               <select value={sizeFilter} onChange={e => setSizeFilter(e.target.value)} className="bg-slate-900 border border-white/10 rounded-xl p-3 text-sm text-white focus:ring-2 focus:ring-brand-indigo/20 outline-none min-w-[140px]">
+               <select value={sizeFilter} onChange={e => setSizeFilter(e.target.value)} className="w-full xl:w-auto bg-slate-900 border border-white/10 rounded-xl p-2.5 text-xs sm:text-sm text-white focus:ring-2 focus:ring-brand-indigo/20 outline-none min-w-[120px]">
                   <option value="all">All Sizes</option>
                   <option value="1-10">1-10 emp</option>
                   <option value="11-50">11-50 emp</option>
@@ -354,45 +354,45 @@ const Companies = () => {
                   <option value="500+">500+ emp</option>
                </select>
 
-               <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)} className="bg-slate-900 border border-white/10 rounded-xl p-3 text-sm text-white focus:ring-2 focus:ring-brand-indigo/20 outline-none min-w-[140px]">
+               <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)} className="w-full xl:w-auto bg-slate-900 border border-white/10 rounded-xl p-2.5 text-xs sm:text-sm text-white focus:ring-2 focus:ring-brand-indigo/20 outline-none min-w-[120px]">
                   <option value="all">All Types</option>
                   {uniqueTypes.map(t => <option key={t} value={t}>{t}</option>)}
                </select>
 
-               <select value={historyFilter} onChange={e => setHistoryFilter(e.target.value)} className="bg-slate-900 border border-white/10 rounded-xl p-3 text-sm text-white focus:ring-2 focus:ring-brand-indigo/20 outline-none min-w-[140px]">
+               <select value={historyFilter} onChange={e => setHistoryFilter(e.target.value)} className="w-full xl:w-auto bg-slate-900 border border-white/10 rounded-xl p-2.5 text-xs sm:text-sm text-white focus:ring-2 focus:ring-brand-indigo/20 outline-none min-w-[120px]">
                   <option value="all">Any History</option>
                   <option value="never">Never Contacted</option>
-                  <option value="7days">Contacted (Last 7 Days)</option>
-                  <option value="7plus">Contacted (7+ Days Ago)</option>
-                  <option value="30days">Contacted (Last 30 Days)</option>
-                  <option value="old">Contacted (30+ Days Ago)</option>
+                  <option value="7days">Contacted (7d)</option>
+                  <option value="7plus">Contacted (7d+)</option>
+                  <option value="30days">Contacted (30d)</option>
+                  <option value="old">Contacted (30d+)</option>
                </select>
 
-               <button onClick={() => { setSearch(''); setLocationFilter('all'); setSizeFilter('all'); setTypeFilter('all'); setHistoryFilter('all'); }} className="p-3 text-slate-500 hover:text-white transition-colors">Reset</button>
+               <button onClick={() => { setSearch(''); setLocationFilter('all'); setSizeFilter('all'); setTypeFilter('all'); setHistoryFilter('all'); }} className="col-span-2 xl:col-span-1 py-2 text-xs font-bold text-slate-500 hover:text-white transition-colors text-center whitespace-nowrap">Reset Filters</button>
             </div>
         </div>
       </div>
 
       {/* Grid */}
       {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 sm:gap-8">
            {[...Array(6)].map((_, i) => (
              <Skeleton key={i} className="h-64 rounded-[2.5rem]" />
            ))}
         </div>
       ) : filtered.length === 0 ? (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="glass rounded-[3rem] p-20 flex flex-col items-center justify-center text-center">
-          <div className="w-20 h-20 rounded-full bg-slate-900 flex items-center justify-center mb-6">
-             <Building2 className="w-10 h-10 text-slate-700" />
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="glass rounded-[2rem] sm:rounded-[3rem] p-12 sm:p-20 flex flex-col items-center justify-center text-center">
+          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-slate-900 flex items-center justify-center mb-6">
+             <Building2 className="w-8 h-8 sm:w-10 sm:h-10 text-slate-700" />
           </div>
           <h3 className="text-xl font-bold text-white mb-2">No companies found</h3>
           <p className="text-slate-500 text-sm max-w-xs">Start building your network by adding your first company profile.</p>
-          <button onClick={() => setModalOpen(true)} className="mt-8 text-brand-indigo font-bold hover:underline flex items-center gap-2">
+          <button onClick={() => setModalOpen(true)} className="mt-6 sm:mt-8 text-brand-indigo font-bold hover:underline flex items-center gap-2">
              Add now <ArrowRight size={16} />
           </button>
         </motion.div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 sm:gap-8">
           <AnimatePresence mode="popLayout">
             {filtered.map((c, i) => (
               <motion.div 
@@ -504,20 +504,20 @@ const Companies = () => {
            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} onClick={() => setSelectedCompany(null)}
              className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm" />
            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-             className="relative w-full max-w-2xl bg-slate-900 border border-white/10 rounded-[2.5rem] shadow-2xl overflow-hidden">
-             <div className="p-8">
-                <div className="flex justify-between items-start mb-8">
+             className="relative w-full max-w-2xl bg-slate-900 border border-white/10 rounded-2xl sm:rounded-[2.5rem] shadow-2xl overflow-hidden">
+             <div className="p-5 sm:p-8">
+                <div className="flex justify-between items-start mb-6 md:mb-8 gap-4">
                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-2xl bg-brand-indigo/20 flex items-center justify-center text-brand-indigo font-black text-xl">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-brand-indigo/20 flex items-center justify-center text-brand-indigo font-black text-lg sm:text-xl shrink-0">
                          {selectedCompany.name.charAt(0)}
                       </div>
                       <div>
-                         <h2 className="text-2xl font-bold text-white">{selectedCompany.name}</h2>
-                         <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mt-0.5">Interaction Timeline</p>
+                         <h2 className="text-xl sm:text-2xl font-bold text-white leading-snug">{selectedCompany.name}</h2>
+                         <p className="text-slate-500 text-[10px] sm:text-xs font-bold uppercase tracking-widest mt-0.5">Interaction Timeline</p>
                       </div>
                    </div>
-                   <button onClick={() => setSelectedCompany(null)} className="p-2 hover:bg-white/5 rounded-full text-slate-400 transition-colors">
-                      <XCircle size={24} />
+                   <button onClick={() => setSelectedCompany(null)} className="p-1.5 hover:bg-white/5 rounded-full text-slate-400 transition-colors shrink-0">
+                      <XCircle size={20} className="sm:w-6 sm:h-6" />
                    </button>
                 </div>
 

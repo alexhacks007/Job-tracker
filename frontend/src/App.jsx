@@ -23,14 +23,11 @@ import EmailCampaigns from './pages/EmailCampaigns';
 // Components
 import Navbar from './components/Navbar';
 import FloatingAddJob from './components/FloatingAddJob';
+import LoadingScreen from './components/LoadingScreen';
 
 const ProtectedRoute = ({ children, requiredPerm }) => {
   const { user, loading } = useAuth();
-  if (loading) return (
-    <div className="min-h-screen bg-surface-950 flex items-center justify-center">
-      <div className="w-12 h-12 border-4 border-brand-indigo/30 border-t-brand-indigo rounded-full animate-spin"></div>
-    </div>
-  );
+  if (loading) return <LoadingScreen />;
   if (!user) return <Navigate to="/login" />;
 
   if (requiredPerm && user.permissions) {

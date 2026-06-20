@@ -107,7 +107,7 @@ const Profile = () => {
   };
 
   const handleProfileSave = async (e) => {
-    e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
     setProfileLoading(true);
     try {
       const res = await fetch('/api/profile/', {
@@ -142,66 +142,66 @@ const Profile = () => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-10 pb-20">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 md:px-8 space-y-8 sm:space-y-10 pb-20">
       {/* Hero Section */}
-      <section className="relative overflow-hidden glass rounded-[3.5rem] p-10 border border-white/5 bg-slate-900/40">
-         <div className="absolute top-0 right-0 p-10 opacity-5 pointer-events-none">
+      <section className="relative overflow-hidden glass rounded-[2rem] sm:rounded-[3.5rem] p-6 sm:p-10 border border-white/5 bg-slate-900/40">
+         <div className="absolute top-0 right-0 p-10 opacity-5 pointer-events-none hidden md:block">
             <User size={180} className="text-brand-indigo" />
          </div>
 
-         <div className="flex flex-col md:flex-row items-center gap-10">
+         <div className="flex flex-col md:flex-row items-center gap-6 sm:gap-10">
             <div className="relative group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
-               <div className="w-32 h-32 rounded-[2.5rem] bg-gradient-to-br from-brand-indigo to-brand-violet p-1 shadow-2xl shadow-brand-indigo/30 transition-transform group-hover:scale-105">
-                  <div className="w-full h-full rounded-[2.3rem] overflow-hidden bg-slate-950 flex items-center justify-center">
+               <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-[2rem] sm:rounded-[2.5rem] bg-gradient-to-br from-brand-indigo to-brand-violet p-1 shadow-2xl shadow-brand-indigo/30 transition-transform group-hover:scale-105">
+                  <div className="w-full h-full rounded-[1.8rem] sm:rounded-[2.3rem] overflow-hidden bg-slate-950 flex items-center justify-center">
                      {avatarPreview ? (
                        <img src={avatarPreview} className="w-full h-full object-cover" />
                      ) : (
-                       <span className="text-5xl font-black text-white">{profile.name?.charAt(0)}</span>
+                       <span className="text-4xl sm:text-5xl font-black text-white">{profile.name?.charAt(0)}</span>
                      )}
                   </div>
                </div>
-               <div className="absolute -bottom-2 -right-2 w-10 h-10 rounded-2xl glass border border-white/10 flex items-center justify-center text-brand-indigo shadow-xl group-hover:bg-brand-indigo group-hover:text-white transition-all">
-                  {avatarLoading ? <Loader2 size={18} className="animate-spin" /> : <Camera size={18} />}
+               <div className="absolute -bottom-1 -right-1 sm:-bottom-2 sm:-right-2 w-9 h-9 sm:w-10 sm:h-10 rounded-2xl glass border border-white/10 flex items-center justify-center text-brand-indigo shadow-xl group-hover:bg-brand-indigo group-hover:text-white transition-all">
+                  {avatarLoading ? <Loader2 size={16} className="animate-spin" /> : <Camera size={16} />}
                </div>
             </div>
             <input type="file" ref={fileInputRef} className="hidden" onChange={handleAvatarChange} />
 
             <div className="text-center md:text-left flex-1 min-w-0">
-               <div className="flex items-center justify-center md:justify-start gap-3 mb-3">
-                  <span className="px-3 py-1 rounded-full bg-brand-indigo/10 border border-brand-indigo/20 text-brand-indigo text-[10px] font-black uppercase tracking-widest">
+               <div className="flex flex-wrap items-center justify-center md:justify-start gap-2.5 mb-3">
+                  <span className="px-2.5 py-1 rounded-full bg-brand-indigo/10 border border-brand-indigo/20 text-brand-indigo text-[9px] sm:text-[10px] font-black uppercase tracking-widest">
                      {profile.role || 'Member'}
                   </span>
-                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1">
+                  <span className="text-[9px] sm:text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1">
                      <Zap size={10} className="text-emerald-400" /> Active Sync
                   </span>
                </div>
-               <h1 className="text-4xl font-black text-white tracking-tight truncate">{profile.name}</h1>
-               <p className="text-slate-400 font-medium mt-1 truncate">{profile.email}</p>
+               <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tight truncate">{profile.name}</h1>
+               <p className="text-sm text-slate-400 font-medium mt-1 truncate">{profile.email}</p>
                
-               <div className="flex flex-wrap justify-center md:justify-start gap-6 mt-6">
+               <div className="flex flex-wrap justify-center md:justify-start gap-4 sm:gap-6 mt-6">
                   <div className="flex flex-col">
-                     <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Opportunities</span>
-                     <span className="text-xl font-black text-white">{jobCount || '0'} Total</span>
+                     <span className="text-[9px] sm:text-[10px] font-black text-slate-600 uppercase tracking-widest">Opportunities</span>
+                     <span className="text-lg sm:text-xl font-black text-white">{jobCount || '0'} Total</span>
                   </div>
-                  <div className="w-px h-10 bg-white/5" />
+                  <div className="hidden sm:block w-px h-10 bg-white/5" />
                   <div className="flex flex-col">
-                     <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Network Score</span>
-                     <span className="text-xl font-black text-white">Elite</span>
+                     <span className="text-[9px] sm:text-[10px] font-black text-slate-600 uppercase tracking-widest">Network Score</span>
+                     <span className="text-lg sm:text-xl font-black text-white">Elite</span>
                   </div>
                </div>
             </div>
          </div>
       </section>
 
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-10">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 sm:gap-10">
          {/* Identity Matrix */}
-         <div className="lg:col-span-3 space-y-10">
-            <section className="glass rounded-[3rem] p-10 border border-white/5 space-y-8">
+         <div className="lg:col-span-3 space-y-6 sm:space-y-10">
+            <section className="glass rounded-[2rem] sm:rounded-[3rem] p-6 sm:p-10 border border-white/5 space-y-6 sm:space-y-8">
                <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-2xl bg-brand-indigo/10 flex items-center justify-center text-brand-indigo">
                      <User size={20} />
                   </div>
-                  <h2 className="text-xl font-black text-white tracking-tight">Identity Matrix</h2>
+                  <h2 className="text-lg sm:text-xl font-black text-white tracking-tight">Identity Matrix</h2>
                </div>
 
                <form onSubmit={handleProfileSave} className="space-y-6">
@@ -211,18 +211,18 @@ const Profile = () => {
                   </div>
                   <InputField id="portfolio" label="Digital Signature (Portfolio)" icon={Globe} value={profile.portfolio || ''} onChange={e => setProfile({...profile, portfolio: e.target.value})} />
                   
-                  <button type="submit" disabled={profileLoading} className="btn-primary w-fit px-10 flex items-center gap-2">
+                  <button type="submit" disabled={profileLoading} className="btn-primary w-full sm:w-fit px-10 flex items-center justify-center gap-2 py-3.5">
                      <Save size={18} /> {profileLoading ? 'Syncing...' : 'Update Matrix'}
                   </button>
                </form>
             </section>
 
-            <section className="glass rounded-[3rem] p-10 border border-white/5 space-y-8">
+            <section className="glass rounded-[2rem] sm:rounded-[3rem] p-6 sm:p-10 border border-white/5 space-y-6 sm:space-y-8">
                <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-2xl bg-brand-violet/10 flex items-center justify-center text-brand-violet">
                      <Link2 size={20} />
                   </div>
-                  <h2 className="text-xl font-black text-white tracking-tight">Platform Extensions</h2>
+                  <h2 className="text-lg sm:text-xl font-black text-white tracking-tight">Platform Extensions</h2>
                </div>
                
                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -231,20 +231,20 @@ const Profile = () => {
                   ))}
                </div>
                
-               <button onClick={handleProfileSave} disabled={profileLoading} className="btn-secondary w-full md:w-fit px-10">
+               <button onClick={handleProfileSave} disabled={profileLoading} className="btn-secondary w-full sm:w-fit px-10 py-3.5 flex items-center justify-center">
                   Save Extensions
                </button>
             </section>
          </div>
 
          {/* Access Control */}
-         <div className="lg:col-span-2 space-y-10">
-            <section className="glass rounded-[3rem] p-10 border border-white/5 space-y-8">
+         <div className="lg:col-span-2 space-y-6 sm:space-y-10">
+            <section className="glass rounded-[2rem] sm:rounded-[3rem] p-6 sm:p-10 border border-white/5 space-y-6 sm:space-y-8">
                <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-2xl bg-yellow-500/10 flex items-center justify-center text-yellow-500">
                      <Lock size={20} />
                   </div>
-                  <h2 className="text-xl font-black text-white tracking-tight">Encryption Keys</h2>
+                  <h2 className="text-lg sm:text-xl font-black text-white tracking-tight">Encryption Keys</h2>
                </div>
 
                <form onSubmit={handlePasswordChange} className="space-y-6">
@@ -252,17 +252,17 @@ const Profile = () => {
                   <InputField id="new-pass" label="New Access Key" icon={Sparkles} type="password" value={passwords.newPassword} onChange={e => setPasswords({...passwords, newPassword: e.target.value})} />
                   <InputField id="confirm-pass" label="Verify New Key" icon={ShieldCheck} type="password" value={passwords.confirmPassword} onChange={e => setPasswords({...passwords, confirmPassword: e.target.value})} />
                   
-                  <button type="submit" disabled={passwordLoading} className="btn-secondary w-full flex items-center justify-center gap-2 border-yellow-500/20 text-yellow-500 hover:bg-yellow-500/10">
+                  <button type="submit" disabled={passwordLoading} className="btn-secondary w-full flex items-center justify-center gap-2 py-3.5 border-yellow-500/20 text-yellow-500 hover:bg-yellow-500/10">
                      <ShieldCheck size={18} /> {passwordLoading ? 'Encrypting...' : 'Update Security'}
                   </button>
                </form>
             </section>
 
-            <section className="glass rounded-[3rem] p-10 border border-red-500/10 bg-red-500/5 group">
-                <h3 className="text-red-500 font-black uppercase text-[10px] tracking-widest mb-2">Danger Zone</h3>
+            <section className="glass rounded-[2rem] sm:rounded-[3rem] p-6 sm:p-10 border border-red-500/10 bg-red-500/5 group">
+                <h3 className="text-red-500 font-black uppercase text-[9px] sm:text-[10px] tracking-widest mb-2">Danger Zone</h3>
                 <h4 className="text-white font-bold text-lg">Terminate Identity</h4>
                 <p className="text-red-500/60 text-xs mt-2 font-medium">Permanently purge all tracked jobs, companies, and matrix data from the cluster.</p>
-                <button className="mt-6 w-full py-4 rounded-2xl bg-red-500/10 text-red-500 font-bold border border-red-500/20 hover:bg-red-500 hover:text-white transition-all">
+                <button className="mt-6 w-full py-3.5 rounded-2xl bg-red-500/10 text-red-500 font-bold border border-red-500/20 hover:bg-red-500 hover:text-white transition-all">
                    Purge Data Segment
                 </button>
             </section>

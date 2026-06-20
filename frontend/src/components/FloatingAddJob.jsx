@@ -36,7 +36,7 @@ const FloatingAddJob = () => {
 
   return (
     <>
-      <div className="fixed bottom-8 right-8 z-40">
+      <div className="fixed bottom-28 right-6 md:bottom-8 md:right-8 z-[9999]">
         <motion.button
           whileHover={{ scale: 1.05, shadow: '0 20px 25px -5px rgb(99 102 241 / 0.4)' }}
           whileTap={{ scale: 0.95 }}

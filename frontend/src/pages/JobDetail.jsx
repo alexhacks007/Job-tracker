@@ -7,6 +7,7 @@ import {
   CheckCircle, XCircle, Clock, Send, PhoneCall, Zap, Sparkles, ChevronRight, Edit3
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import LogoSpinner from '../components/LogoSpinner';
 import JobFormModal from '../components/JobFormModal';
 
 const STATUS_CONFIG = {
@@ -78,9 +79,8 @@ const JobDetail = () => {
   };
 
   if (loading) return (
-    <div className="flex flex-col items-center justify-center py-40 gap-4">
-       <div className="w-10 h-10 border-2 border-brand-indigo border-t-transparent rounded-full animate-spin" />
-       <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Decrypting Segment...</p>
+    <div className="min-h-[70vh] w-full flex items-center justify-center">
+       <LogoSpinner size="lg" message="Decrypting Segment..." />
     </div>
   );
 

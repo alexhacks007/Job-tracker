@@ -44,10 +44,10 @@ const JobCard = React.forwardRef(({ job, onSave, savingId, saved }, ref) => {
       ref={ref}
       layout
       initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-      className="glass group p-6 rounded-[2.5rem] border border-white/5 hover:border-white/10 transition-all hover:shadow-2xl hover:shadow-brand-indigo/5"
+      className="glass group p-5 sm:p-6 rounded-2xl sm:rounded-[2.5rem] border border-white/5 hover:border-white/10 transition-all hover:shadow-2xl hover:shadow-brand-indigo/5"
     >
-      <div className="flex items-start gap-5">
-        <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center border border-white/5 overflow-hidden flex-shrink-0">
+      <div className="flex items-start gap-4 sm:gap-5">
+        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-white/5 flex items-center justify-center border border-white/5 overflow-hidden flex-shrink-0">
           {(job.company_logo && !imgError) ? (
             <img 
               src={`https://images.weserv.nl/?url=${encodeURIComponent(job.company_logo)}`} 
@@ -64,51 +64,51 @@ const JobCard = React.forwardRef(({ job, onSave, savingId, saved }, ref) => {
 
         <div className="flex-1 min-w-0">
            <div className="flex items-center gap-2 mb-1">
-              <span className="text-[10px] font-black uppercase tracking-widest text-brand-indigo">{job.platform}</span>
-              <div className="h-1 w-1 rounded-full bg-slate-700" />
-              <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">{timeAgo(job.publication_date)}</span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-brand-indigo shrink-0">{job.platform}</span>
+              <div className="h-1 w-1 rounded-full bg-slate-700 shrink-0" />
+              <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 shrink-0">{timeAgo(job.publication_date)}</span>
            </div>
-           <h3 className="text-lg font-bold text-white tracking-tight leading-tight group-hover:text-brand-indigo transition-colors line-clamp-1">
+           <h3 className="text-base sm:text-lg font-bold text-white tracking-tight leading-tight group-hover:text-brand-indigo transition-colors line-clamp-1">
              {job.title}
            </h3>
-           <p className="text-sm font-bold text-slate-400 mt-1 flex items-center gap-1.5">
-             <Building2 size={12} /> {job.company_name}
+           <p className="text-sm font-bold text-slate-400 mt-1 flex items-center gap-1.5 truncate">
+             <Building2 size={12} className="shrink-0" /> <span className="truncate">{job.company_name}</span>
            </p>
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-2 mt-5">
+      <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-4 sm:mt-5">
         {job.location && (
-          <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 text-[10px] font-bold text-slate-400 border border-white/5">
-            <MapPin size={10} className="text-brand-blue" /> {job.location}
+          <span className="flex items-center gap-1 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-white/5 text-[9px] sm:text-[10px] font-bold text-slate-400 border border-white/5 truncate max-w-[150px]">
+            <MapPin size={10} className="text-brand-blue shrink-0" /> <span className="truncate">{job.location}</span>
           </span>
         )}
         {job.salary && (
-          <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-[10px] font-bold text-emerald-400 border border-emerald-500/20">
-            <DollarSign size={10} /> {job.salary}
+          <span className="flex items-center gap-1 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-emerald-500/10 text-[9px] sm:text-[10px] font-bold text-emerald-400 border border-emerald-500/20 truncate max-w-[150px]">
+            <DollarSign size={10} className="shrink-0" /> <span className="truncate">{job.salary}</span>
           </span>
         )}
-        <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 text-[10px] font-bold text-slate-400 border border-white/5">
-          <Tag size={10} className="text-brand-violet" /> {job.category}
+        <span className="flex items-center gap-1 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-white/5 text-[9px] sm:text-[10px] font-bold text-slate-400 border border-white/5 shrink-0">
+          <Tag size={10} className="text-brand-violet shrink-0" /> {job.category}
         </span>
       </div>
 
-      <div className="mt-5 space-y-4">
-        <p className="text-xs text-slate-500 leading-relaxed font-medium">
+      <div className="mt-4 sm:mt-5 space-y-4">
+        <p className="text-xs text-slate-500 leading-relaxed font-medium line-clamp-3">
           {expanded ? desc : preview}{desc.length > 160 && !expanded ? '...' : ''}
         </p>
         
         <div className="flex gap-3 pt-2">
           <a href={job.url} target="_blank" rel="noopener noreferrer"
-            className="flex-1 btn-primary py-2.5 text-[11px] flex items-center justify-center gap-2">
-            <Send size={14} /> Quick Apply
+            className="flex-1 btn-primary py-2.5 text-[10px] sm:text-[11px] flex items-center justify-center gap-2 whitespace-nowrap rounded-2xl">
+            <Send size={12} /> Quick Apply
           </a>
           <button onClick={() => onSave(job)} disabled={isSaving || saved}
-            className={`flex items-center justify-center w-12 h-10 rounded-2xl border transition-all
+            className={`flex items-center justify-center w-11 h-10 rounded-2xl border transition-all shrink-0
               ${saved 
                 ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' 
                 : 'bg-white/5 border-white/5 text-slate-500 hover:border-white/10 hover:text-white'}`}>
-            {isSaving ? <Loader2 size={16} className="animate-spin" /> : saved ? <CheckCircle size={16} /> : <BookmarkPlus size={16} />}
+            {isSaving ? <Loader2 size={14} className="animate-spin" /> : saved ? <CheckCircle size={14} /> : <BookmarkPlus size={14} />}
           </button>
         </div>
       </div>
@@ -117,9 +117,9 @@ const JobCard = React.forwardRef(({ job, onSave, savingId, saved }, ref) => {
 });
 
 const SkeletonCard = () => (
-  <div className="glass rounded-[2.5rem] p-6 border border-white/5 space-y-6">
-    <div className="flex gap-5">
-      <Skeleton className="w-14 h-14 rounded-2xl flex-shrink-0" />
+  <div className="glass rounded-2xl sm:rounded-[2.5rem] p-5 sm:p-6 border border-white/5 space-y-5">
+    <div className="flex gap-4 sm:gap-5">
+      <Skeleton className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl flex-shrink-0" />
       <div className="flex-1 space-y-3">
         <Skeleton className="h-2 w-24 rounded-full" />
         <Skeleton className="h-4 w-3/4 rounded-full" />
@@ -210,9 +210,9 @@ const JobDiscovery = () => {
   };
 
   return (
-    <div className="space-y-10 pb-20">
+    <div className="space-y-6 md:space-y-10 pb-20">
       {/* Search Header */}
-      <section className="relative overflow-hidden glass rounded-[2.5rem] md:rounded-[3.5rem] p-6 md:p-16 border border-white/5">
+      <section className="relative overflow-hidden glass rounded-2xl md:rounded-[3.5rem] p-5 sm:p-8 md:p-16 border border-white/5">
          <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
             <Sparkles size={80} className="text-brand-indigo md:w-[120px] md:h-[120px]" />
          </div>
@@ -221,24 +221,24 @@ const JobDiscovery = () => {
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-indigo/10 border border-brand-indigo/20 text-brand-indigo text-[10px] font-black uppercase tracking-widest mb-6">
                <Wifi size={10} className="animate-pulse" /> Live Market Analytics
             </div>
-            <h1 className="text-3xl md:text-5xl font-black text-white tracking-tight leading-none">
+            <h1 className="text-2xl sm:text-4xl md:text-5xl font-black text-white tracking-tight leading-tight md:leading-none">
                Discover your <span className="gradient-text">next move.</span>
             </h1>
-            <p className="text-slate-400 mt-4 text-sm font-medium">Real-time worldwide opportunities filtered specifically for your stack.</p>
+            <p className="text-slate-400 mt-4 text-xs sm:text-sm font-medium">Real-time worldwide opportunities filtered specifically for your stack.</p>
          </div>
 
-         <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="lg:col-span-2 relative group">
+         <div className="mt-8 md:mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            <div className="sm:col-span-2 relative group">
                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-brand-indigo transition-all" size={18} />
                <input type="text" placeholder="Design, Engineering, Data..." value={search} onChange={e => setSearch(e.target.value)}
-                 className="w-full pl-12 pr-4 py-4 glass border-white/5 rounded-3xl outline-none focus:ring-2 focus:ring-brand-indigo/20 text-white font-medium" />
+                 className="w-full pl-12 pr-4 py-3.5 sm:py-4 glass border-white/5 rounded-3xl outline-none focus:ring-2 focus:ring-brand-indigo/20 text-white text-sm sm:text-base font-medium" />
             </div>
              <div className="relative group">
                 <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                 <select 
                   value={locationSearch}
                   onChange={(e) => setLocationSearch(e.target.value)}
-                  className="w-full pl-12 pr-4 py-4 glass border-white/5 rounded-3xl outline-none focus:ring-2 focus:ring-brand-indigo/20 text-white font-medium appearance-none"
+                  className="w-full pl-12 pr-8 py-3.5 sm:py-4 glass border-white/5 rounded-3xl outline-none focus:ring-2 focus:ring-brand-indigo/20 text-white text-sm sm:text-base font-medium appearance-none"
                 >
                    <option value="">Remote Worldwide</option>
                    <option value="India">India (All)</option>
@@ -252,25 +252,26 @@ const JobDiscovery = () => {
                    <option value="North America">North America</option>
                    <option value="Europe">Europe</option>
                 </select>
+                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" size={16} />
              </div>
-            <button onClick={fetchJobs} className="btn-primary flex items-center justify-center gap-2 animate-glow">
-               <RefreshCw size={20} className={loading ? 'animate-spin' : ''} /> Refresh Sync
+            <button onClick={fetchJobs} className="btn-primary flex items-center justify-center gap-2 animate-glow py-3.5 sm:py-4 text-xs font-bold uppercase tracking-widest rounded-3xl">
+               <RefreshCw size={18} className={loading ? 'animate-spin' : ''} /> Refresh Sync
             </button>
          </div>
       </section>
 
        {/* Discovery Tabs */}
-       <div className="flex gap-4 mb-8">
+       <div className="flex gap-3 sm:gap-4 mb-6 md:mb-8">
           <button onClick={() => setActiveTab('local')}
-            className={`flex-1 py-4 rounded-3xl text-sm font-black uppercase tracking-widest transition-all ${activeTab === 'local' ? 'bg-brand-indigo text-white' : 'glass text-slate-500'}`}>
+            className={`flex-1 py-3 sm:py-4 rounded-3xl text-xs sm:text-sm font-black uppercase tracking-widest transition-all ${activeTab === 'local' ? 'bg-brand-indigo text-white' : 'glass text-slate-500'}`}>
             Local Market (India)
           </button>
           <button onClick={() => setActiveTab('remote')}
-            className={`flex-1 py-4 rounded-3xl text-sm font-black uppercase tracking-widest transition-all ${activeTab === 'remote' ? 'bg-brand-indigo text-white' : 'glass text-slate-500'}`}>
+            className={`flex-1 py-3 sm:py-4 rounded-3xl text-xs sm:text-sm font-black uppercase tracking-widest transition-all ${activeTab === 'remote' ? 'bg-brand-indigo text-white' : 'glass text-slate-500'}`}>
             Global Remote
           </button>
        </div>
-      <section className="glass rounded-[2.5rem] p-8 border border-brand-indigo/10 bg-brand-indigo/[0.02]">
+      <section className="glass rounded-[2rem] sm:rounded-[2.5rem] p-5 sm:p-8 border border-brand-indigo/10 bg-brand-indigo/[0.02]">
          <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 rounded-2xl bg-brand-indigo/10 flex items-center justify-center text-brand-indigo">
                <Sparkles size={20} />
@@ -293,10 +294,10 @@ const JobDiscovery = () => {
                 href={platform.url} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className={`flex flex-col items-center gap-3 p-6 rounded-[2rem] bg-white/5 border border-white/5 transition-all ${platform.color} group hover:scale-105`}
+                className={`flex flex-col items-center gap-3 p-4 sm:p-6 rounded-[2rem] bg-white/5 border border-white/5 transition-all ${platform.color} group hover:scale-105`}
               >
-                 <platform.icon size={24} className="text-slate-400 group-hover:text-white transition-colors" />
-                 <span className="text-xs font-black uppercase tracking-widest text-slate-500 group-hover:text-white">{platform.name}</span>
+                 <platform.icon size={22} className="text-slate-400 group-hover:text-white transition-colors" />
+                 <span className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-slate-500 group-hover:text-white">{platform.name}</span>
               </a>
             ))}
          </div>
@@ -306,10 +307,10 @@ const JobDiscovery = () => {
       </section>
 
       {/* Category Pills */}
-      <div className="flex flex-wrap gap-2 px-2">
+      <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar scroll-smooth">
          {CATEGORIES.map(cat => (
            <button key={cat.value} onClick={() => setCategory(cat.value)}
-             className={`px-6 py-2 rounded-2xl text-xs font-black uppercase tracking-widest transition-all
+             className={`px-4 sm:px-6 py-2 rounded-2xl text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap
                ${category === cat.value ? 'bg-brand-indigo text-white shadow-xl shadow-brand-indigo/20' : 'glass text-slate-500 hover:text-white border-white/5 hover:border-white/10'}`}>
              {cat.label}
            </button>
@@ -317,16 +318,16 @@ const JobDiscovery = () => {
       </div>
 
       {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 sm:gap-8">
            {[...Array(9)].map((_, i) => <SkeletonCard key={i} />)}
         </div>
       ) : error ? (
-        <div className="glass rounded-[3rem] p-20 text-center border border-red-500/10">
-           <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-6" />
-           <p className="text-white font-bold text-xl">{error}</p>
+        <div className="glass rounded-[2rem] sm:rounded-[3rem] p-12 sm:p-20 text-center border border-red-500/10">
+           <AlertCircle className="w-12 h-12 sm:w-16 sm:h-16 text-red-500 mx-auto mb-6" />
+           <p className="text-white font-bold text-lg sm:text-xl">{error}</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 sm:gap-8">
            <AnimatePresence mode="popLayout">
              {jobs.map(job => (
                <JobCard key={job.id} job={job} onSave={handleSaveToTracker} savingId={savingId} saved={savedIds.has(job.id)} />

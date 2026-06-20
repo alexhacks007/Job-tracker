@@ -215,58 +215,58 @@ const Todos = () => {
   return (
     <div className="space-y-8 pb-12">
       {/* Dynamic Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="glass p-6 rounded-[2.5rem] flex items-center gap-5 border border-white/5">
-             <div className="w-14 h-14 rounded-2xl bg-brand-indigo/10 flex items-center justify-center text-brand-indigo">
-                <ListTodo size={28} />
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+          <div className="glass p-5 sm:p-6 rounded-[2rem] sm:rounded-[2.5rem] flex items-center gap-4 sm:gap-5 border border-white/5">
+             <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-brand-indigo/10 flex items-center justify-center text-brand-indigo flex-shrink-0">
+                <ListTodo size={24} className="sm:w-7 sm:h-7" />
              </div>
              <div>
-                <h4 className="text-2xl font-bold text-white tracking-tight">{stats.total}</h4>
-                <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Active Goals</p>
+                <h4 className="text-xl sm:text-2xl font-bold text-white tracking-tight">{stats.total}</h4>
+                <p className="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-widest">Active Goals</p>
              </div>
           </div>
-          <div className="glass p-6 rounded-[2.5rem] flex items-center gap-5 border border-white/5">
-             <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-500">
-                <CheckCheck size={28} />
+          <div className="glass p-5 sm:p-6 rounded-[2rem] sm:rounded-[2.5rem] flex items-center gap-4 sm:gap-5 border border-white/5">
+             <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-500 flex-shrink-0">
+                <CheckCheck size={24} className="sm:w-7 sm:h-7" />
              </div>
              <div>
-                <h4 className="text-2xl font-bold text-white tracking-tight">{stats.done}</h4>
-                <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Completed</p>
+                <h4 className="text-xl sm:text-2xl font-bold text-white tracking-tight">{stats.done}</h4>
+                <p className="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-widest">Completed</p>
              </div>
           </div>
-          <div className="glass p-6 rounded-[2.5rem] flex items-center gap-5 border border-white/5">
-             <div className="w-14 h-14 rounded-2xl bg-red-500/10 flex items-center justify-center text-red-500">
-                <AlertTriangle size={28} />
+          <div className="glass p-5 sm:p-6 rounded-[2rem] sm:rounded-[2.5rem] flex items-center gap-4 sm:gap-5 border border-white/5">
+             <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-red-500/10 flex items-center justify-center text-red-500 flex-shrink-0">
+                <AlertTriangle size={24} className="sm:w-7 sm:h-7" />
              </div>
              <div>
-                <h4 className="text-2xl font-bold text-white tracking-tight">{stats.overdue}</h4>
-                <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Overdue</p>
+                <h4 className="text-xl sm:text-2xl font-bold text-white tracking-tight">{stats.overdue}</h4>
+                <p className="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-widest">Overdue</p>
              </div>
           </div>
       </div>
 
       {/* Toolbar */}
-      <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6">
+      <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 sm:gap-6">
         <div>
-           <h1 className="text-3xl font-bold text-white tracking-tight">Daily Todos</h1>
-           <p className="text-slate-400 mt-1">Focus on what's important today.</p>
+           <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Daily Todos</h1>
+           <p className="text-xs sm:text-sm text-slate-400 mt-1">Focus on what's important today.</p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3 w-full xl:w-auto">
-           <div className="relative flex-1 min-w-[300px] group">
+           <div className="relative flex-1 min-w-0 sm:min-w-[300px] w-full sm:w-auto group">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-focus-within:text-brand-indigo transition-colors" />
               <input type="text" placeholder="Filter tasks or companies..." value={search} onChange={e => setSearch(e.target.value)}
                 className="w-full pl-12 pr-4 py-3 glass border-white/5 rounded-2xl outline-none focus:ring-2 focus:ring-brand-indigo/20 transition-all text-sm text-white placeholder:text-slate-600" />
            </div>
            
            <button onClick={() => setShowFilters(!showFilters)}
-             className={`flex items-center gap-2 px-6 py-3 rounded-2xl border text-sm font-bold transition-all
+             className={`flex items-center gap-2 px-5 sm:px-6 py-3 rounded-2xl border text-xs sm:text-sm font-bold transition-all
                ${showFilters ? 'bg-brand-indigo text-white border-brand-indigo shadow-lg' : 'glass text-slate-400 border-white/5 hover:border-white/10'}`}>
              <Filter size={16} /> Filters <ChevronDown size={14} className={`transition-transform ${showFilters ? 'rotate-180' : ''}`} />
            </button>
 
            <button onClick={() => { setCurrentTodo(null); setModalOpen(true); }}
-             className="btn-primary flex items-center gap-2 whitespace-nowrap">
+             className="btn-primary flex items-center gap-2 whitespace-nowrap text-xs sm:text-sm py-3 px-5 sm:px-6">
              <Plus size={20} /> Create Task
            </button>
         </div>
@@ -282,12 +282,12 @@ const Todos = () => {
                     {s}
                  </button>
                ))}
-            </div>
+             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Kanban Board Style View */}
+      {/* Kanban Board / Tasks Stack */}
       {isLoading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
            {[...Array(6)].map((_, i) => (
@@ -295,41 +295,83 @@ const Todos = () => {
            ))}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="glass rounded-[3rem] p-20 flex flex-col items-center justify-center text-center">
-           <Layers className="w-16 h-16 text-slate-800 mb-6" />
-           <p className="text-white font-bold text-xl">Peaceful Minds.</p>
-           <p className="text-slate-500 text-sm mt-2">All tasks completed or none found matching your filters.</p>
+        <div className="glass rounded-[2rem] sm:rounded-[3rem] p-12 sm:p-20 flex flex-col items-center justify-center text-center border border-white/5">
+           <Layers className="w-12 h-12 sm:w-16 sm:h-16 text-slate-800 mb-6" />
+           <p className="text-white font-bold text-lg sm:text-xl">Peaceful Minds.</p>
+           <p className="text-slate-500 text-xs sm:text-sm mt-2">All tasks completed or none found matching your filters.</p>
         </div>
       ) : (
-        <div className="space-y-12">
-          {[
-            { key: 'in_progress', label: 'In Progress', color: 'bg-orange-500' },
-            { key: 'pending',     label: 'Pending',     color: 'bg-brand-blue' },
-            { key: 'done',        label: 'Completed',    color: 'bg-emerald-500' },
-          ].map(group => groups[group.key].length > 0 && (
-            <div key={group.key} className="space-y-6">
-              <div className="flex items-center gap-4">
-                 <div className={`h-2 w-2 rounded-full ${group.color}`} />
-                 <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">{group.label}</h3>
-                 <div className="flex-1 h-px bg-white/5" />
-                 <span className="text-[10px] font-black px-2.5 py-1 rounded-full bg-white/5 text-slate-500">{groups[group.key].length}</span>
+        <>
+          {/* Mobile/Tablet view: Stacked groups vertically */}
+          <div className="lg:hidden space-y-8">
+            {[
+              { key: 'in_progress', label: 'In Progress', color: 'bg-orange-500' },
+              { key: 'pending',     label: 'Pending',     color: 'bg-brand-blue' },
+              { key: 'done',        label: 'Completed',    color: 'bg-emerald-500' },
+            ].map(group => groups[group.key].length > 0 && (
+              <div key={group.key} className="space-y-4">
+                <div className="flex items-center gap-3">
+                   <div className={`h-2 w-2 rounded-full ${group.color}`} />
+                   <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">{group.label}</h3>
+                   <div className="flex-1 h-px bg-white/5" />
+                   <span className="text-[10px] font-black px-2.5 py-1 rounded-full bg-white/5 text-slate-500">{groups[group.key].length}</span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <AnimatePresence mode="popLayout">
+                    {groups[group.key].map(todo => (
+                      <TodoCard
+                        key={todo.id}
+                        todo={todo}
+                        onEdit={t => { setCurrentTodo(t); setModalOpen(true); }}
+                        onDelete={handleDelete}
+                        onStatusChange={handleStatusChange}
+                      />
+                    ))}
+                  </AnimatePresence>
+                </div>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-                <AnimatePresence mode="popLayout">
-                  {groups[group.key].map(todo => (
-                    <TodoCard
-                      key={todo.id}
-                      todo={todo}
-                      onEdit={t => { setCurrentTodo(t); setModalOpen(true); }}
-                      onDelete={handleDelete}
-                      onStatusChange={handleStatusChange}
-                    />
-                  ))}
-                </AnimatePresence>
+            ))}
+          </div>
+
+          {/* Desktop/Widescreen view: Side-by-side Kanban Board */}
+          <div className="hidden lg:grid lg:grid-cols-3 gap-6 items-start">
+            {[
+              { key: 'pending',     label: 'Pending',     color: 'bg-brand-blue' },
+              { key: 'in_progress', label: 'In Progress', color: 'bg-orange-500' },
+              { key: 'done',        label: 'Completed',    color: 'bg-emerald-500' },
+            ].map(group => (
+              <div key={group.key} className="glass p-5 rounded-[2rem] border border-white/5 bg-white/[0.01] flex flex-col min-h-[500px]">
+                <div className="flex items-center justify-between mb-5 pb-3 border-b border-white/5">
+                  <div className="flex items-center gap-2.5">
+                    <div className={`h-2.5 w-2.5 rounded-full ${group.color}`} />
+                    <h3 className="text-sm font-bold text-white tracking-tight">{group.label}</h3>
+                  </div>
+                  <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-white/5 text-slate-400">{groups[group.key].length}</span>
+                </div>
+                
+                <div className="space-y-4 flex-1">
+                  <AnimatePresence mode="popLayout">
+                    {groups[group.key].length === 0 ? (
+                      <div className="h-32 rounded-2xl border border-dashed border-white/5 flex items-center justify-center text-xs text-slate-600">
+                        No tasks in {group.label.toLowerCase()}
+                      </div>
+                    ) : (
+                      groups[group.key].map(todo => (
+                        <TodoCard
+                          key={todo.id}
+                          todo={todo}
+                          onEdit={t => { setCurrentTodo(t); setModalOpen(true); }}
+                          onDelete={handleDelete}
+                          onStatusChange={handleStatusChange}
+                        />
+                      ))
+                    )}
+                  </AnimatePresence>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        </>
       )}
 
       <TodoFormModal isOpen={modalOpen} onClose={() => setModalOpen(false)} onSave={handleSave} todo={currentTodo} />

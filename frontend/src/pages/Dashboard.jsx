@@ -101,21 +101,21 @@ const Dashboard = () => {
   const responseRate = Math.round((stats.interviews / (stats.applied || 1)) * 100);
 
   return (
-    <div className="space-y-8 pb-12">
+    <div className="space-y-6 md:space-y-8 pb-12">
       {/* Welcome Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 md:gap-6">
         <div>
-          <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight flex items-center gap-3">
-            Mission Control <Sparkles className="w-6 h-6 text-brand-violet" />
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white tracking-tight flex items-center gap-3">
+            Mission Control <Sparkles className="w-5 h-5 md:w-6 md:h-6 text-brand-violet shrink-0" />
           </h1>
-          <p className="text-slate-400 mt-1 font-medium">AI-Powered Career Operating System</p>
+          <p className="text-slate-400 mt-1 text-sm md:text-base font-medium">AI-Powered Career Operating System</p>
         </div>
-        <div className="w-full md:w-auto flex gap-1 bg-white/5 p-1.5 rounded-2xl border border-white/5 shadow-inner">
+        <div className="w-full sm:w-auto flex gap-1 bg-white/5 p-1 rounded-2xl border border-white/5 shadow-inner">
            {['7', '30', '90'].map(range => (
              <button 
                key={range}
                onClick={() => setTimeRange(range)}
-               className={`flex-1 md:flex-none px-6 py-2 rounded-xl text-xs font-bold transition-all ${timeRange === range ? 'bg-brand-indigo text-white shadow-lg shadow-brand-indigo/20 scale-[1.02]' : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'}`}
+               className={`flex-1 sm:flex-none px-4 sm:px-6 py-2 rounded-xl text-xs font-bold transition-all ${timeRange === range ? 'bg-brand-indigo text-white shadow-lg shadow-brand-indigo/20 scale-[1.02]' : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'}`}
              >
                Last {range}d
              </button>
@@ -130,28 +130,28 @@ const Dashboard = () => {
         </div>
         
         <div className="lg:col-span-2 space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <StreakWidget streak={achievementsData.streak} />
-            <div className="glass-card p-6">
-              <h4 className="text-slate-400 font-medium text-sm mb-4 uppercase tracking-widest">Application Funnel</h4>
+            <div className="glass-card p-5 sm:p-6">
+              <h4 className="text-slate-400 font-medium text-xs sm:text-sm mb-4 uppercase tracking-widest">Application Funnel</h4>
               <FunnelChart data={funnelData} />
             </div>
           </div>
           
           {/* Achievements Row */}
-          <div className="glass-card p-6">
-             <h4 className="text-slate-400 font-medium text-sm mb-4 uppercase tracking-widest">Recent Achievements</h4>
-             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-               {achievementsData.achievements && achievementsData.achievements.map((ach) => (
-                 <AchievementBadge key={ach.id} achievement={ach} />
-               ))}
+          <div className="glass-card p-5 sm:p-6">
+             <h4 className="text-slate-400 font-medium text-xs sm:text-sm mb-4 uppercase tracking-widest">Recent Achievements</h4>
+             <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                {achievementsData.achievements && achievementsData.achievements.map((ach) => (
+                  <AchievementBadge key={ach.id} achievement={ach} />
+                ))}
              </div>
           </div>
         </div>
       </div>
 
       {/* Stats Cards Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
         <StatsCard 
           title="Total Applications" 
           value={stats.applied} 
@@ -182,18 +182,26 @@ const Dashboard = () => {
       </div>
 
       {/* GitHub Style Heatmap */}
-      <div className="glass-card p-6 overflow-hidden">
-        <div className="flex items-center justify-between mb-6">
+      <div className="glass-card p-5 sm:p-6 overflow-hidden">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-2">
            <h3 className="text-lg font-bold text-white flex items-center gap-2">
              Activity Heatmap
            </h3>
-           <span className="text-xs text-brand-indigo bg-brand-indigo/10 px-3 py-1 rounded-full font-bold">Past 120 Days</span>
+           <span className="text-xs text-brand-indigo bg-brand-indigo/10 px-3 py-1 rounded-full font-bold w-fit">Past 120 Days</span>
         </div>
-        <Heatmap data={heatmapData} />
+        <div className="overflow-x-auto no-scrollbar scroll-smooth">
+          <div className="min-w-[650px] md:min-w-0">
+            <Heatmap data={heatmapData} />
+          </div>
+        </div>
       </div>
 
       {/* Traditional Analytics (Area Chart) */}
-      <ApplicationInsights stats={stats} />
+      <div className="overflow-x-auto no-scrollbar">
+        <div className="min-w-[650px] lg:min-w-0">
+          <ApplicationInsights stats={stats} />
+        </div>
+      </div>
 
     </div>
   );

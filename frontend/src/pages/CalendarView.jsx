@@ -205,13 +205,13 @@ const CalendarView = () => {
     const blanks = Array.from({ length: firstDay }, (_, i) => i);
 
     return (
-      <div className="grid grid-cols-7 gap-px bg-white/5 rounded-3xl overflow-hidden border border-white/5">
+      <div className="grid grid-cols-7 gap-px bg-white/5 rounded-2xl md:rounded-3xl overflow-hidden border border-white/5">
         {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => (
-          <div key={d} className="bg-slate-900/50 py-4 text-center text-[10px] font-bold text-slate-500 uppercase tracking-widest border-b border-white/5">
+          <div key={d} className="bg-slate-900/50 py-3 md:py-4 text-center text-[9px] md:text-[10px] font-bold text-slate-500 uppercase tracking-widest border-b border-white/5">
             {d}
           </div>
         ))}
-        {blanks.map(b => <div key={`b-${b}`} className="bg-slate-950/20 aspect-square md:aspect-auto md:h-28"></div>)}
+        {blanks.map(b => <div key={`b-${b}`} className="bg-slate-950/20 h-16 sm:h-20 md:h-28"></div>)}
         {daysArray.map(day => {
           const { apps, interviews, dayTodos, dateStr } = getEventsForDate(day);
           const hasPendingTodos = dayTodos.some(t => t.status !== 'done');
@@ -221,29 +221,29 @@ const CalendarView = () => {
               key={day}
               whileHover={{ backgroundColor: 'rgba(255,255,255,0.03)' }}
               onClick={() => setSelectedDate({ day, apps, interviews, dayTodos, dateStr })}
-              className={`relative bg-slate-950/40 p-3 h-24 md:h-28 transition-all cursor-pointer group
+              className={`relative bg-slate-950/40 p-1.5 sm:p-3 h-16 sm:h-20 md:h-28 transition-all cursor-pointer group flex flex-col justify-between
                 ${isToday(day) ? 'ring-inset ring-2 ring-brand-indigo' : ''}
                 ${selectedDate?.day === day && new Date(selectedDate.dateStr).getMonth() === currentDate.getMonth() ? 'bg-white/5 z-10' : ''}
               `}
             >
-              <span className={`text-sm font-bold ${isToday(day) ? 'text-brand-indigo' : 'text-slate-500'}`}>{day}</span>
-              <div className="mt-2 space-y-1">
+              <span className={`text-xs md:text-sm font-bold ${isToday(day) ? 'text-brand-indigo' : 'text-slate-500'}`}>{day}</span>
+              <div className="flex flex-row sm:flex-col gap-1 sm:space-y-1 justify-center sm:justify-start items-center sm:items-start flex-wrap mt-auto">
                 {apps > 0 && (
-                  <div className="flex items-center gap-1.5 min-w-0">
-                    <div className="w-1.5 h-1.5 rounded-full bg-brand-blue" />
-                    <span className="text-[10px] font-bold text-slate-300 truncate">{apps}</span>
+                  <div className="flex items-center gap-1.5 min-w-0" title={`${apps} applications`}>
+                    <div className="w-1.5 h-1.5 rounded-full bg-brand-blue shrink-0" />
+                    <span className="text-[9px] font-bold text-slate-300 truncate hidden xs:inline">{apps} <span className="hidden md:inline">Apps</span></span>
                   </div>
                 )}
                 {interviews.length > 0 && (
-                  <div className="flex items-center gap-1.5 min-w-0">
+                  <div className="flex items-center gap-1.5 min-w-0" title={`${interviews.length} interviews`}>
                     <div className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse shrink-0" />
-                    <span className="text-[10px] font-bold text-slate-300 truncate">{interviews.length} <span className="hidden md:inline">Call</span></span>
+                    <span className="text-[9px] font-bold text-slate-300 truncate hidden xs:inline">{interviews.length} <span className="hidden md:inline">Call</span></span>
                   </div>
                 )}
                 {dayTodos.length > 0 && (
-                  <div className="flex items-center gap-1.5 min-w-0">
+                  <div className="flex items-center gap-1.5 min-w-0" title={`${dayTodos.length} tasks`}>
                     <div className={`w-1.5 h-1.5 shrink-0 rounded-full ${hasPendingTodos ? 'bg-emerald-500' : 'bg-slate-700'}`} />
-                    <span className="text-[10px] font-bold text-slate-500 truncate">{dayTodos.length} <span className="hidden md:inline">Task</span></span>
+                    <span className="text-[9px] font-bold text-slate-500 truncate hidden xs:inline">{dayTodos.length} <span className="hidden md:inline">Task</span></span>
                   </div>
                 )}
               </div>
@@ -285,26 +285,26 @@ const CalendarView = () => {
   const highPriorityTodos = todos.filter(t => t.status !== 'done').slice(0, 5);
 
   return (
-    <div className="flex flex-col lg:flex-row gap-8 h-full min-h-[700px] mb-20">
+    <div className="flex flex-col lg:flex-row gap-6 md:gap-8 h-full min-h-[700px] mb-12">
       
       {/* Main Calendar Container */}
-      <div className="flex-1 glass rounded-[3rem] p-8 flex flex-col">
-        {/* Header (existing code...) */}
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-10">
+      <div className="flex-1 glass rounded-2xl sm:rounded-[3rem] p-4 sm:p-8 flex flex-col">
+        {/* Header */}
+        <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-6 mb-6 md:mb-10">
            <div className="flex items-center gap-4">
-              <div className="p-3 rounded-2xl bg-brand-indigo/10 text-brand-indigo border border-brand-indigo/20">
-                 <CalendarIcon className="w-6 h-6" />
+              <div className="p-3 rounded-2xl bg-brand-indigo/10 text-brand-indigo border border-brand-indigo/20 shrink-0">
+                 <CalendarIcon className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
               <div>
-                 <h2 className="text-2xl font-bold text-white tracking-tight">
+                 <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight leading-none">
                     {viewMode === 'year' ? currentDate.getFullYear() : currentDate.toLocaleString('default', { month: 'long', year: 'numeric' })}
                  </h2>
-                 <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-0.5">Application Schedule</p>
+                 <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">Application Schedule</p>
               </div>
            </div>
 
-           <div className="flex flex-col sm:flex-row w-full md:w-auto items-stretch sm:items-center gap-3">
-              <div className="flex w-full md:w-auto bg-white/5 p-1.5 rounded-2xl border border-white/5 shadow-inner">
+           <div className="flex flex-col sm:flex-row w-full xl:w-auto items-stretch sm:items-center gap-3">
+              <div className="flex w-full sm:w-auto bg-white/5 p-1 rounded-2xl border border-white/5 shadow-inner">
                  {[
                    { id: 'month', icon: CalendarDays },
                    { id: '6month', icon: Grid3X3 },
@@ -313,25 +313,25 @@ const CalendarView = () => {
                    <button 
                      key={mode.id}
                      onClick={() => setViewMode(mode.id)}
-                     className={`flex-1 md:flex-none p-2.5 flex items-center justify-center rounded-xl transition-all ${viewMode === mode.id ? 'bg-brand-indigo text-white shadow-lg shadow-brand-indigo/20 scale-[1.02]' : 'text-slate-500 hover:text-white hover:bg-white/5'}`}
+                     className={`flex-1 sm:flex-none p-2 flex items-center justify-center rounded-xl transition-all ${viewMode === mode.id ? 'bg-brand-indigo text-white shadow-lg shadow-brand-indigo/20 scale-[1.02]' : 'text-slate-500 hover:text-white hover:bg-white/5'}`}
                    >
-                      <mode.icon className="w-5 h-5 md:w-4 md:h-4" />
+                       <mode.icon className="w-4 h-4" />
                    </button>
                  ))}
               </div>
 
-              <div className="flex w-full md:w-auto items-center justify-between bg-white/5 p-1.5 rounded-2xl border border-white/5 shadow-inner">
+              <div className="flex w-full sm:w-auto items-center justify-between bg-white/5 p-1 rounded-2xl border border-white/5 shadow-inner">
                  <button onClick={() => {
                    const jump = viewMode === 'month' ? 1 : (viewMode === '6month' ? 6 : 12);
                    setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() - jump, 1));
-                 }} className="p-2 px-4 text-slate-400 hover:text-white hover:bg-white/5 rounded-xl transition-all active:scale-95"><ChevronLeft className="w-5 h-5" /></button>
+                 }} className="p-2 px-4 text-slate-400 hover:text-white hover:bg-white/5 rounded-xl transition-all active:scale-95"><ChevronLeft className="w-4 h-4" /></button>
                  
-                 <button onClick={() => { setCurrentDate(new Date()); setViewMode('month'); }} className="flex-1 md:flex-none px-6 py-2 text-xs font-bold text-slate-300 hover:text-white tracking-widest text-center uppercase">Today</button>
+                 <button onClick={() => { setCurrentDate(new Date()); setViewMode('month'); }} className="flex-1 sm:flex-none px-4 py-2 text-xs font-bold text-slate-300 hover:text-white tracking-widest text-center uppercase">Today</button>
                  
                  <button onClick={() => {
                    const jump = viewMode === 'month' ? 1 : (viewMode === '6month' ? 6 : 12);
                    setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() + jump, 1));
-                 }} className="p-2 px-4 text-slate-400 hover:text-white hover:bg-white/5 rounded-xl transition-all active:scale-95"><ChevronRight className="w-5 h-5" /></button>
+                 }} className="p-2 px-4 text-slate-400 hover:text-white hover:bg-white/5 rounded-xl transition-all active:scale-95"><ChevronRight className="w-4 h-4" /></button>
               </div>
            </div>
         </div>
@@ -352,7 +352,7 @@ const CalendarView = () => {
       </div>
 
       {/* Side Details Panel */}
-      <div className="w-full lg:w-96 glass rounded-[3rem] p-8 flex flex-col h-full sticky top-8">
+      <div className="w-full lg:w-96 glass rounded-2xl sm:rounded-[3rem] p-5 sm:p-8 flex flex-col lg:sticky lg:top-8 h-fit lg:h-auto">
         <AnimatePresence mode="wait">
           {selectedDate ? (
             <motion.div 
@@ -362,33 +362,33 @@ const CalendarView = () => {
               exit={{ opacity: 0, x: -20 }}
               className="flex-1 flex flex-col"
             >
-              <div className="flex justify-between items-start mb-8">
+              <div className="flex justify-between items-start mb-6">
                  <div>
-                    <h3 className="text-xl font-bold text-white">
+                    <h3 className="text-lg font-bold text-white leading-tight">
                        {new Date(selectedDate.dateStr).toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}
                     </h3>
-                    <p className="text-xs text-brand-indigo font-bold uppercase tracking-wider mt-1">Daily Tactical Snapshot</p>
+                    <p className="text-[10px] text-brand-indigo font-bold uppercase tracking-wider mt-1">Daily Tactical Snapshot</p>
                  </div>
-                 <button onClick={() => setSelectedDate(null)} className="p-2 text-slate-400 hover:text-white"><X className="w-5 h-5" /></button>
+                 <button onClick={() => setSelectedDate(null)} className="p-1.5 text-slate-400 hover:text-white hover:bg-white/5 rounded-full"><X className="w-4 h-4" /></button>
               </div>
 
-              <div className="flex-1 space-y-8 overflow-y-auto no-scrollbar">
+              <div className="flex-1 space-y-6 overflow-y-auto no-scrollbar max-h-[350px] lg:max-h-none pr-1">
                  {/* Interviews */}
                  {selectedDate.interviews.length > 0 && (
-                    <div className="space-y-4">
-                       <h4 className="text-[10px] font-black text-slate-600 uppercase tracking-[0.2em]">Interviews</h4>
+                    <div className="space-y-3">
+                       <h4 className="text-[9px] font-black text-slate-600 uppercase tracking-[0.2em]">Interviews</h4>
                        {selectedDate.interviews.map((job, idx) => (
                           <div 
                              key={idx} 
                              onClick={() => navigate(`/jobs/${job.id}`)}
-                             className="p-5 bg-orange-500/5 border border-orange-500/20 rounded-3xl relative overflow-hidden cursor-pointer hover:bg-orange-500/10 hover:-translate-y-0.5 transition-all shadow-sm shadow-orange-500/5"
+                             className="p-4 sm:p-5 bg-orange-500/5 border border-orange-500/20 rounded-2xl sm:rounded-3xl relative overflow-hidden cursor-pointer hover:bg-orange-500/10 hover:-translate-y-0.5 transition-all shadow-sm shadow-orange-500/5"
                           >
-                             <div className="absolute top-0 left-0 w-1.5 h-full bg-orange-500" />
-                             <h5 className="font-bold text-white">{job.job_role}</h5>
+                             <div className="absolute top-0 left-0 w-1 bg-orange-500 h-full" />
+                             <h5 className="font-bold text-white text-sm sm:text-base leading-snug">{job.job_role}</h5>
                              <p className="text-xs text-slate-400 mt-1">{job.company_name}</p>
-                             <div className="flex items-center gap-4 mt-4 text-[10px] font-bold text-orange-500">
-                                <span className="flex items-center gap-1.5"><Clock className="w-3 h-3" /> Scheduled</span>
-                                <span className="flex items-center gap-1.5"><MapPin className="w-3 h-3" /> {job.location || 'Remote'}</span>
+                             <div className="flex items-center gap-3 mt-4 text-[10px] font-bold text-orange-500">
+                                <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> Scheduled</span>
+                                <span className="flex items-center gap-1"><MapPin className="w-3 h-3" /> {job.location || 'Remote'}</span>
                              </div>
                           </div>
                        ))}
@@ -396,14 +396,14 @@ const CalendarView = () => {
                  )}
 
                  {/* Day Specific Todos */}
-                 <div className="space-y-4">
-                    <h4 className="text-[10px] font-black text-slate-600 uppercase tracking-[0.2em]">Tasks</h4>
+                 <div className="space-y-3">
+                    <h4 className="text-[9px] font-black text-slate-600 uppercase tracking-[0.2em]">Tasks</h4>
                     {(() => {
                       const dayTodos = todos.filter(t => t.start_date === selectedDate.dateStr || t.end_date === selectedDate.dateStr);
                       return dayTodos.length > 0 ? (
                         dayTodos.map(todo => <TodoItem key={todo.id} todo={todo} />)
                       ) : (
-                        <div className="p-8 text-center bg-white/5 rounded-[2rem] border border-dashed border-white/10">
+                        <div className="p-6 text-center bg-white/5 rounded-2xl border border-dashed border-white/10">
                            <p className="text-[10px] text-slate-600 italic">No tasks for this day</p>
                         </div>
                       );
@@ -414,20 +414,20 @@ const CalendarView = () => {
                  {selectedDate.apps > 0 && (
                     <div 
                        onClick={() => navigate('/jobs')}
-                       className="p-5 bg-brand-blue/5 border border-brand-blue/20 rounded-3xl flex items-center gap-4 cursor-pointer hover:bg-brand-blue/10 hover:-translate-y-0.5 transition-all shadow-sm shadow-brand-blue/5"
+                       className="p-4 sm:p-5 bg-brand-blue/5 border border-brand-blue/20 rounded-2xl sm:rounded-3xl flex items-center gap-3 sm:gap-4 cursor-pointer hover:bg-brand-blue/10 hover:-translate-y-0.5 transition-all shadow-sm shadow-brand-blue/5"
                     >
-                       <div className="w-10 h-10 rounded-2xl bg-brand-blue/10 flex items-center justify-center shrink-0">
-                          <Building2 className="w-5 h-5 text-brand-blue" />
+                       <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-brand-blue/10 flex items-center justify-center shrink-0">
+                          <Building2 className="w-4.5 h-4.5 text-brand-blue" />
                        </div>
                        <div>
-                          <p className="text-sm font-bold text-white">{selectedDate.apps} Job Applications</p>
-                          <p className="text-[10px] text-slate-500 mt-0.5 font-bold uppercase tracking-widest">Submitted</p>
+                          <p className="text-xs sm:text-sm font-bold text-white">{selectedDate.apps} Job Applications</p>
+                          <p className="text-[9px] text-slate-500 mt-0.5 font-bold uppercase tracking-widest">Submitted</p>
                        </div>
                     </div>
                  )}
               </div>
-              <button onClick={() => navigate('/todos')} className="w-full btn-primary mt-8 flex items-center justify-center gap-2 py-4">
-                 <Plus className="w-5 h-5" /> Add Task
+              <button onClick={() => navigate('/todos')} className="w-full btn-primary mt-6 flex items-center justify-center gap-2 py-3 rounded-2xl text-xs font-bold uppercase tracking-wider">
+                 <Plus className="w-4.5 h-4.5" /> Add Task
               </button>
             </motion.div>
           ) : (
@@ -438,29 +438,29 @@ const CalendarView = () => {
                exit={{ opacity: 0, x: -20 }}
                className="flex-1 flex flex-col"
             >
-               <div className="mb-8">
-                  <h3 className="text-xl font-bold text-white tracking-tight">Mission Control</h3>
-                  <p className="text-xs text-brand-indigo font-bold uppercase tracking-wider mt-1">High-Priority Focus</p>
+               <div className="mb-6">
+                  <h3 className="text-lg font-bold text-white tracking-tight">Mission Control</h3>
+                  <p className="text-[10px] text-brand-indigo font-bold uppercase tracking-wider mt-1">High-Priority Focus</p>
                </div>
 
-               <div className="flex-1 space-y-4 overflow-y-auto no-scrollbar">
+               <div className="flex-1 space-y-3 overflow-y-auto no-scrollbar max-h-[350px] lg:max-h-none pr-1">
                   {highPriorityTodos.length > 0 ? (
                     highPriorityTodos.map(todo => <TodoItem key={todo.id} todo={todo} />)
                   ) : (
-                    <div className="py-20 text-center space-y-4">
-                       <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto">
-                          <CheckSquare className="w-8 h-8 text-slate-700" />
+                    <div className="py-12 lg:py-20 text-center space-y-3 bg-white/[0.02] rounded-2xl border border-white/5">
+                       <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center mx-auto">
+                          <CheckSquare className="w-6 h-6 text-slate-600" />
                        </div>
-                       <p className="text-sm text-slate-500 font-medium italic">You're all caught up!</p>
+                       <p className="text-xs text-slate-500 font-medium italic">You're all caught up!</p>
                        <button onClick={() => navigate('/todos')} className="text-xs font-bold text-brand-indigo hover:underline">View All Tasks</button>
                     </div>
                   )}
                </div>
 
-               <div className="mt-auto pt-8 border-t border-white/5">
-                  <div className="p-6 bg-brand-indigo/5 rounded-[2.5rem] border border-brand-indigo/10 space-y-3">
-                     <h4 className="text-xs font-black text-white uppercase tracking-widest text-center">Interviews Today</h4>
-                     <p className="text-3xl font-black text-brand-indigo text-center">
+               <div className="mt-6 lg:mt-auto pt-6 border-t border-white/5">
+                  <div className="p-4 sm:p-6 bg-brand-indigo/5 rounded-[2rem] border border-brand-indigo/10 space-y-2">
+                     <h4 className="text-[10px] font-black text-white uppercase tracking-widest text-center">Interviews Today</h4>
+                     <p className="text-2xl sm:text-3xl font-black text-brand-indigo text-center">
                         {stats.upcomingInterviews.filter(i => new Date(i.interview_date).toDateString() === new Date().toDateString()).length}
                      </p>
                   </div>

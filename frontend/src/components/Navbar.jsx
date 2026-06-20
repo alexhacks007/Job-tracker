@@ -20,7 +20,7 @@ import toast from 'react-hot-toast';
 
 const NAV_ITEMS = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/', permission: 'ANALYTICS_ACCESS' },
-  { icon: Target, label: 'Applications', path: '/jobs', permission: 'JOB_MANAGEMENT' },
+  { icon: Briefcase, label: 'Applications', path: '/jobs', permission: 'JOB_MANAGEMENT' },
   { icon: Building2, label: 'Companies', path: '/companies', permission: 'JOB_MANAGEMENT' },
   { icon: Zap, label: 'Discover', path: '/discover', permission: 'JOB_MANAGEMENT' },
   { icon: Mail, label: 'Outreach', path: '/campaigns', permission: 'EMAIL_CAMPAIGNS' }

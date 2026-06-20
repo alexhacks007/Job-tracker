@@ -67,8 +67,8 @@ def process_campaign_background(campaign_id):
                 if campaign.template and campaign.template.resume:
                     try:
                         email.attach_file(campaign.template.resume.path)
-                    except:
-                        pass
+                    except Exception as attach_err:
+                        raise FileNotFoundError(f"Attachment missing/failed: {str(attach_err)}")
                 
                 email.send(fail_silently=False)
                 

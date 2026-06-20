@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { ArrowLeft, User, Mail, Calendar, LogIn, Briefcase, CheckSquare, Activity, List, Target, ShieldAlert } from 'lucide-react';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
+import LogoSpinner from '../components/LogoSpinner';
 import { 
   Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer,
   PieChart, Pie, Cell, Tooltip, AreaChart, Area, XAxis, YAxis, CartesianGrid
@@ -73,8 +74,8 @@ const AdminUserDetail = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="w-12 h-12 border-4 border-brand-indigo border-t-transparent rounded-full animate-spin"></div>
+      <div className="min-h-[70vh] w-full flex items-center justify-center">
+        <LogoSpinner size="lg" message="Loading deep user analytics..." />
       </div>
     );
   }
