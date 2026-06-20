@@ -83,6 +83,8 @@ class AdminDashboardStatsView(APIView):
         user_count = User.objects.count()
         job_count = Job.objects.count()
         interview_count = Job.objects.filter(status__icontains='interview').count()
+        total_outreaches = EmailLog.objects.count()
+        total_companies = Company.objects.count()
         status_dist = Job.objects.values('status').annotate(name=models.F('status'), value=Count('id')).values('name', 'value')
         top_comp = Job.objects.values('company_name').annotate(name=models.F('company_name'), applications=Count('id')).order_by('-applications')[:5].values('name', 'applications')
         
@@ -99,6 +101,8 @@ class AdminDashboardStatsView(APIView):
             'totalUsers': user_count,
             'totalJobs': job_count,
             'totalInterviews': interview_count,
+            'totalOutreaches': total_outreaches,
+            'totalCompanies': total_companies,
             'recentRiskUsers': list(recent_risk_users),
             'globalChartData': list(chart_data),
             'statusDistribution': list(status_dist),

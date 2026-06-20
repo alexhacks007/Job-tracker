@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { motion } from 'framer-motion';
-import { Users, Activity, Briefcase, Zap, AlertTriangle, ShieldCheck, TrendingDown, Target } from 'lucide-react';
+import { Users, Activity, Briefcase, Zap, AlertTriangle, ShieldCheck, TrendingDown, Target, Mail, Building2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Skeleton from '../components/Skeleton';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
 
 const StatsCard = ({ title, value, icon: Icon, color }) => (
-  <div className="glass-card p-6 flex flex-col gap-4 relative overflow-hidden group">
+  <div className="glass-card p-6 flex flex-col gap-4 relative overflow-hidden group hover:-translate-y-1 hover:shadow-lg hover:shadow-indigo-500/5 transition-all duration-300">
     <div className={`absolute -right-6 -top-6 w-24 h-24 rounded-full ${color} opacity-10 group-hover:scale-150 transition-transform duration-500`} />
     <div className="flex justify-between items-start">
       <div className={`p-3 rounded-2xl ${color} bg-opacity-20`}>
@@ -72,8 +72,8 @@ const AdminDashboard = () => {
     return (
       <div className="space-y-8 pb-12">
         <Skeleton className="w-1/3 h-10" />
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-40 rounded-3xl" />)}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
+          {[...Array(6)].map((_, i) => <Skeleton key={i} className="h-40 rounded-3xl" />)}
         </div>
       </div>
     );
@@ -101,9 +101,11 @@ const AdminDashboard = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
          <StatsCard title="Total Platform Users" value={stats.totalUsers} icon={Users} color="bg-brand-indigo" />
          <StatsCard title="Global Applications" value={stats.totalJobs} icon={Briefcase} color="bg-brand-blue" />
+         <StatsCard title="Global Outreaches" value={stats.totalOutreaches || 0} icon={Mail} color="bg-brand-violet" />
+         <StatsCard title="Targeted Companies" value={stats.totalCompanies || 0} icon={Building2} color="bg-brand-blue" />
          <StatsCard title="Interviews Secured" value={stats.totalInterviews} icon={Activity} color="bg-brand-violet" />
          <StatsCard title="System Health" value="99.9%" icon={Zap} color="bg-emerald-500" />
       </div>
