@@ -86,7 +86,7 @@ class AdminDashboardStatsView(APIView):
         total_outreaches = EmailLog.objects.count()
         total_companies = Company.objects.count()
         status_dist = Job.objects.values('status').annotate(name=models.F('status'), value=Count('id')).values('name', 'value')
-        top_comp = Job.objects.values('company_name').annotate(name=models.F('company_name'), applications=Count('id')).order_by('-applications')[:5].values('name', 'applications')
+        top_comp = Job.objects.values('company_name').annotate(name=models.F('company_name'), applications=Count('id'), interviews=Count('id', filter=Q(status__icontains='interview'))).order_by('-applications')[:5].values('name', 'applications', 'interviews')
         
         cutoff_date = timezone.now().date() - timedelta(days=days)
         chart_data = Job.objects.filter(applied_date__gte=cutoff_date).values('applied_date').annotate(date=models.F('applied_date'), count=Count('id')).order_by('applied_date').values('date', 'count')

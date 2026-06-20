@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { Users, Activity, Briefcase, Zap, AlertTriangle, ShieldCheck, TrendingDown, Target, Mail, Building2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Skeleton from '../components/Skeleton';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell, Legend } from 'recharts';
 
 const StatsCard = ({ title, value, icon: Icon, color }) => (
   <div className="glass-card p-6 flex flex-col gap-4 relative overflow-hidden group hover:-translate-y-1 hover:shadow-lg hover:shadow-indigo-500/5 transition-all duration-300">
@@ -20,6 +20,24 @@ const StatsCard = ({ title, value, icon: Icon, color }) => (
     </div>
   </div>
 );
+
+const CustomTooltip = ({ active, payload, label }) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="glass-dropdown p-4 flex flex-col gap-2">
+        <p className="text-sm font-bold text-white mb-1">{label}</p>
+        {payload.map((entry, index) => (
+          <div key={index} className="flex items-center gap-2 text-xs font-semibold">
+            <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: entry.color || entry.fill || '#fff' }} />
+            <span className="text-slate-300">{entry.name}:</span>
+            <span className="text-white font-black">{entry.value}</span>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  return null;
+};
 
 const AdminDashboard = () => {
   const { token, user } = useAuth();
@@ -180,19 +198,25 @@ const AdminDashboard = () => {
           <div className="h-[250px]">
              {stats.topCompanies?.length > 0 ? (
                <ResponsiveContainer width="100%" height="100%">
-                 <BarChart data={stats.topCompanies} margin={{ top: 0, right: 10, left: -20, bottom: 0 }}>
-                   <defs>
-                     <linearGradient id="barColor" x1="0" y1="0" x2="0" y2="1">
-                       <stop offset="0%" stopColor="#10b981" />
-                       <stop offset="100%" stopColor="#047857" />
-                     </linearGradient>
-                   </defs>
-                   <CartesianGrid strokeDasharray="3 3" stroke="#ffffff00" vertical={false} />
-                   <XAxis dataKey="name" stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} />
-                   <YAxis stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} />
-                   <RechartsTooltip cursor={{ fill: 'rgba(255,255,255,0.05)' }} contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '12px' }} />
-                   <Bar dataKey="applications" fill="url(#barColor)" radius={[4, 4, 0, 0]} barSize={40} />
-                 </BarChart>
+                  <BarChart data={stats.topCompanies} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="barColorApps" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#6366f1" />
+                        <stop offset="100%" stopColor="#3b82f6" />
+                      </linearGradient>
+                      <linearGradient id="barColorInterviews" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#10b981" />
+                        <stop offset="100%" stopColor="#06b6d4" />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#ffffff05" vertical={false} />
+                    <XAxis dataKey="name" stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} />
+                    <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} allowDecimals={false} />
+                    <RechartsTooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.02)' }} />
+                    <Legend verticalAlign="top" height={36} iconType="circle" iconSize={8} wrapperStyle={{ fontSize: '11px', color: '#94a3b8' }} />
+                    <Bar name="Applications" dataKey="applications" fill="url(#barColorApps)" radius={[6, 6, 0, 0]} maxBarSize={24} />
+                    <Bar name="Interviews Secured" dataKey="interviews" fill="url(#barColorInterviews)" radius={[6, 6, 0, 0]} maxBarSize={24} />
+                  </BarChart>
                </ResponsiveContainer>
              ) : (
                 <div className="h-full flex items-center justify-center text-slate-500">No data available.</div>
