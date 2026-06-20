@@ -6,7 +6,10 @@ import {
   Clock, 
   CheckCircle2, 
   TrendingUp, 
-  Sparkles
+  Sparkles,
+  Mail,
+  Building2,
+  Target
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import StatsCard from '../components/StatsCard';
@@ -179,6 +182,89 @@ const Dashboard = () => {
           color="bg-orange-500" 
           trend="up" trendValue="8"
         />
+      </div>
+
+      {/* Advanced Outreach & Company Analytics */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        {/* Top 5 Most Applied Companies Bar Chart or List */}
+        <div className="glass-card p-5 sm:p-6 lg:col-span-2 border border-white/5 relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-brand-indigo/5 blur-3xl -z-10 rounded-full" />
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-sm sm:text-base font-bold text-white flex items-center gap-2">
+              <Building2 className="text-brand-indigo w-4 h-4" /> Top Target Companies Analysis
+            </h3>
+            <span className="text-[10px] text-slate-500 uppercase tracking-widest font-black">Velocity View</span>
+          </div>
+          
+          <div className="space-y-4">
+            {stats.topCompanies && stats.topCompanies.length > 0 ? (
+              stats.topCompanies.map((company, index) => {
+                const colors = ['bg-brand-indigo', 'bg-brand-blue', 'bg-brand-violet', 'bg-emerald-500', 'bg-orange-500'];
+                const maxCount = Math.max(...stats.topCompanies.map(c => c.count)) || 1;
+                const percentage = Math.round((company.count / maxCount) * 100);
+                
+                return (
+                  <div key={company.name} className="space-y-2">
+                    <div className="flex justify-between items-center text-xs font-bold text-slate-300">
+                      <span className="flex items-center gap-2">
+                        <span className={`w-2.5 h-2.5 rounded-full ${colors[index % colors.length]}`} />
+                        {company.name}
+                      </span>
+                      <span className="text-white">{company.count} {company.count === 1 ? 'Application' : 'Applications'}</span>
+                    </div>
+                    <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden">
+                      <motion.div 
+                        className={`h-full ${colors[index % colors.length]} rounded-full`}
+                        initial={{ width: 0 }}
+                        animate={{ width: `${percentage}%` }}
+                        transition={{ duration: 1, delay: index * 0.1 }}
+                      />
+                    </div>
+                  </div>
+                );
+              })
+            ) : (
+              <div className="h-40 flex flex-col items-center justify-center text-center text-slate-500">
+                <Briefcase size={24} className="mb-2 opacity-50" />
+                <p className="text-xs">No company applications found. Link companies inside opportunities.</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Outreach Funnel Integration card */}
+        <div className="glass-card p-5 sm:p-6 border border-white/5 flex flex-col justify-between relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-brand-violet/5 blur-3xl -z-10 rounded-full" />
+          <div>
+            <h3 className="text-sm sm:text-base font-bold text-white flex items-center gap-2 mb-2">
+              <Mail className="text-brand-violet w-4 h-4" /> Outreach Success Rate
+            </h3>
+            <p className="text-[10px] text-slate-500 font-medium leading-relaxed">Bulk email campaigns results and recruiter engagement.</p>
+          </div>
+          
+          <div className="my-6 flex items-center justify-center relative">
+            <div className="w-28 h-28 rounded-full border border-white/5 flex flex-col items-center justify-center relative overflow-hidden">
+              <div className="absolute inset-0 bg-brand-indigo/5 blur-lg" />
+              <span className="text-3xl font-black text-white relative z-10">{stats.totalOutreaches || '0'}</span>
+              <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest relative z-10">Outreaches</span>
+            </div>
+            
+            {/* Ambient animation glow */}
+            <div className="absolute w-32 h-32 border border-brand-indigo/20 rounded-full animate-ping opacity-5 pointer-events-none" />
+          </div>
+
+          <div className="space-y-2.5">
+             <div className="flex justify-between items-center text-xs">
+                <span className="text-slate-400 font-medium">Targeted Companies</span>
+                <span className="text-white font-bold bg-white/5 px-2.5 py-0.5 rounded-lg border border-white/5">{stats.totalCompanies || '0'} Total</span>
+             </div>
+             <div className="flex justify-between items-center text-xs">
+                <span className="text-slate-400 font-medium">Campaign Mode</span>
+                <span className="text-emerald-400 font-bold bg-emerald-500/10 px-2.5 py-0.5 rounded-lg border border-emerald-500/10">Active Sentinel</span>
+             </div>
+          </div>
+        </div>
       </div>
 
       {/* GitHub Style Heatmap */}

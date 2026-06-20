@@ -2,7 +2,7 @@ from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.db import models
-from .models import Job, User, BehaviorMetric
+from .models import Job, User, BehaviorMetric, Company, EmailLog
 from django.db.models import Count, Q
 from django.utils import timezone
 from datetime import timedelta
@@ -11,8 +11,14 @@ class DashboardStatsView(APIView):
     def get(self, request):
         if request.user.role == 'admin':
             jobs = Job.objects.all()
+            total_outreaches = EmailLog.objects.count()
+            total_companies = Company.objects.count()
+            top_comp = Job.objects.values('company_name').annotate(name=models.F('company_name'), count=models.Count('id')).order_by('-count')[:5].values('name', 'count')
         else:
             jobs = Job.objects.filter(user=request.user)
+            total_outreaches = EmailLog.objects.filter(user=request.user).count()
+            total_companies = Company.objects.filter(user=request.user).count()
+            top_comp = Job.objects.filter(user=request.user).values('company_name').annotate(name=models.F('company_name'), count=models.Count('id')).order_by('-count')[:5].values('name', 'count')
             
         stats = {
             'totalJobs': jobs.count(),
@@ -20,6 +26,9 @@ class DashboardStatsView(APIView):
             'interviews': jobs.filter(status__icontains='interview').count(),
             'offers': jobs.filter(status__icontains='offer').count(),
             'rejected': jobs.filter(status__icontains='reject').count(),
+            'totalOutreaches': total_outreaches,
+            'totalCompanies': total_companies,
+            'topCompanies': list(top_comp),
             'chartData': [],
             'applicationsByDate': {},
             'interviewsByDate': {},
