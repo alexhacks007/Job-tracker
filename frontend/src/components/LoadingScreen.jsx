@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Target } from 'lucide-react';
+import logo from '../zenbyte_logo.png';
 
 const STATUS_MESSAGES = [
   "Securing communication lines...",
   "Loading matrix interface...",
   "Verifying encryption keys...",
   "Synchronizing data streams...",
-  "Powering up TrackerPro..."
+  "Powering up ZenByte Job Tracker..."
 ];
 
 const LoadingScreen = () => {
@@ -64,7 +65,7 @@ const LoadingScreen = () => {
 
           {/* Main Core Logo Box */}
           <motion.div
-            className="w-20 h-20 rounded-[2rem] bg-gradient-to-tr from-brand-indigo to-brand-violet flex items-center justify-center shadow-[0_0_40px_rgba(99,102,241,0.4)] border border-white/10 relative z-20"
+            className="w-20 h-20 rounded-[2rem] bg-slate-900 flex items-center justify-center shadow-[0_0_40px_rgba(99,102,241,0.4)] border border-white/10 relative z-20 overflow-hidden"
             initial={{ scale: 0.9, rotate: -15 }}
             animate={{ 
               scale: [0.9, 1.05, 0.9],
@@ -76,7 +77,7 @@ const LoadingScreen = () => {
               ease: "easeInOut" 
             }}
           >
-            <Target className="text-white w-10 h-10 filter drop-shadow-[0_2px_10px_rgba(255,255,255,0.4)]" />
+            <img src={logo} alt="ZenByte Logo" className="w-full h-full object-cover rounded-[2rem]" />
           </motion.div>
         </div>
 
@@ -84,7 +85,7 @@ const LoadingScreen = () => {
         <div className="text-center space-y-2">
           <div className="relative overflow-hidden inline-block px-4 py-1">
             <h1 className="text-xl sm:text-2xl font-black tracking-widest text-white">
-              TRACKER<span className="text-brand-indigo">PRO</span>
+              ZenByte <span className="text-brand-indigo font-medium">Job Tracker</span>
             </h1>
             <motion.div
               className="absolute top-0 left-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12"

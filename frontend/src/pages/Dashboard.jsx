@@ -9,8 +9,13 @@ import {
   Sparkles,
   Mail,
   Building2,
-  Target
+  Target,
+  MapPin
 } from 'lucide-react';
+import { 
+  BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, 
+  PieChart, Pie, Legend
+} from 'recharts';
 import toast from 'react-hot-toast';
 import StatsCard from '../components/StatsCard';
 import Skeleton from '../components/Skeleton';
@@ -36,6 +41,10 @@ const Dashboard = () => {
   
   const [timeRange, setTimeRange] = useState('30');
   const [loading, setLoading] = useState(true);
+
+  const COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899'];
+
+  const hasEmailAccess = user?.permissions && (user.permissions.includes('ALL') || user.permissions.includes('EMAIL_CAMPAIGNS'));
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -188,7 +197,7 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Top 5 Most Applied Companies Bar Chart or List */}
-        <div className="glass-card p-5 sm:p-6 lg:col-span-2 border border-white/5 relative overflow-hidden group">
+        <div className={`glass-card p-5 sm:p-6 border border-white/5 relative overflow-hidden group ${hasEmailAccess ? 'lg:col-span-2' : 'lg:col-span-3'}`}>
           <div className="absolute top-0 right-0 w-32 h-32 bg-brand-indigo/5 blur-3xl -z-10 rounded-full" />
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-sm sm:text-base font-bold text-white flex items-center gap-2">
@@ -234,37 +243,128 @@ const Dashboard = () => {
         </div>
 
         {/* Outreach Funnel Integration card */}
-        <div className="glass-card p-5 sm:p-6 border border-white/5 flex flex-col justify-between relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-brand-violet/5 blur-3xl -z-10 rounded-full" />
-          <div>
-            <h3 className="text-sm sm:text-base font-bold text-white flex items-center gap-2 mb-2">
-              <Mail className="text-brand-violet w-4 h-4" /> Outreach Success Rate
-            </h3>
-            <p className="text-[10px] text-slate-500 font-medium leading-relaxed">Bulk email campaigns results and recruiter engagement.</p>
-          </div>
-          
-          <div className="my-6 flex items-center justify-center relative">
-            <div className="w-28 h-28 rounded-full border border-white/5 flex flex-col items-center justify-center relative overflow-hidden">
-              <div className="absolute inset-0 bg-brand-indigo/5 blur-lg" />
-              <span className="text-3xl font-black text-white relative z-10">{stats.totalOutreaches || '0'}</span>
-              <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest relative z-10">Outreaches</span>
+        {hasEmailAccess && (
+          <div className="glass-card p-5 sm:p-6 border border-white/5 flex flex-col justify-between relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-brand-violet/5 blur-3xl -z-10 rounded-full" />
+            <div>
+              <h3 className="text-sm sm:text-base font-bold text-white flex items-center gap-2 mb-2">
+                <Mail className="text-brand-violet w-4 h-4" /> Outreach Success Rate
+              </h3>
+              <p className="text-[10px] text-slate-500 font-medium leading-relaxed">Bulk email campaigns results and recruiter engagement.</p>
             </div>
             
-            {/* Ambient animation glow */}
-            <div className="absolute w-32 h-32 border border-brand-indigo/20 rounded-full animate-ping opacity-5 pointer-events-none" />
-          </div>
+            <div className="my-6 flex items-center justify-center relative">
+              <div className="w-28 h-28 rounded-full border border-white/5 flex flex-col items-center justify-center relative overflow-hidden">
+                <div className="absolute inset-0 bg-brand-indigo/5 blur-lg" />
+                <span className="text-3xl font-black text-white relative z-10">{stats.totalOutreaches || '0'}</span>
+                <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest relative z-10">Outreaches</span>
+              </div>
+              
+              {/* Ambient animation glow */}
+              <div className="absolute w-32 h-32 border border-brand-indigo/20 rounded-full animate-ping opacity-5 pointer-events-none" />
+            </div>
 
-          <div className="space-y-2.5">
-             <div className="flex justify-between items-center text-xs">
-                <span className="text-slate-400 font-medium">Targeted Companies</span>
-                <span className="text-white font-bold bg-white/5 px-2.5 py-0.5 rounded-lg border border-white/5">{stats.totalCompanies || '0'} Total</span>
-             </div>
-             <div className="flex justify-between items-center text-xs">
-                <span className="text-slate-400 font-medium">Campaign Mode</span>
-                <span className="text-emerald-400 font-bold bg-emerald-500/10 px-2.5 py-0.5 rounded-lg border border-emerald-500/10">Active Sentinel</span>
-             </div>
+            <div className="space-y-2.5">
+               <div className="flex justify-between items-center text-xs">
+                  <span className="text-slate-400 font-medium">Targeted Companies</span>
+                  <span className="text-white font-bold bg-white/5 px-2.5 py-0.5 rounded-lg border border-white/5">{stats.totalCompanies || '0'} Total</span>
+               </div>
+               <div className="flex justify-between items-center text-xs">
+                  <span className="text-slate-400 font-medium">Campaign Mode</span>
+                  <span className="text-emerald-400 font-bold bg-emerald-500/10 px-2.5 py-0.5 rounded-lg border border-emerald-500/10">Active Sentinel</span>
+               </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Company Distribution & High Outreach Analytics */}
+      <div className={`grid grid-cols-1 ${hasEmailAccess ? 'lg:grid-cols-2' : 'grid-cols-1'} gap-6`}>
+        {/* Companies by City Donut Chart */}
+        <div className="glass-card p-5 sm:p-6 border border-white/5 relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-brand-blue/5 blur-3xl -z-10 rounded-full" />
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-sm sm:text-base font-bold text-white flex items-center gap-2">
+              <MapPin className="text-brand-blue w-4 h-4" /> Company Locations by City
+            </h3>
+            <span className="text-[10px] text-slate-500 uppercase tracking-widest font-black">City Segregation</span>
+          </div>
+          
+          <div className="h-[250px] flex items-center justify-center">
+            {stats.companiesByCity && stats.companiesByCity.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={stats.companiesByCity}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={80}
+                    paddingAngle={5}
+                    dataKey="count"
+                    nameKey="city"
+                  >
+                    {stats.companiesByCity.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <RechartsTooltip
+                    contentStyle={{ backgroundColor: '#1e293b', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
+                    itemStyle={{ color: '#fff' }}
+                  />
+                  <Legend verticalAlign="bottom" height={36} iconType="circle" iconSize={8} wrapperStyle={{ fontSize: '11px', color: '#94a3b8' }} />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex flex-col items-center justify-center text-center text-slate-500">
+                <MapPin size={24} className="mb-2 opacity-50 text-slate-600" />
+                <p className="text-xs">No city data available.</p>
+              </div>
+            )}
           </div>
         </div>
+
+        {/* Top 5 High Outreach Companies Bar Chart */}
+        {hasEmailAccess && (
+          <div className="glass-card p-5 sm:p-6 border border-white/5 relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-brand-violet/5 blur-3xl -z-10 rounded-full" />
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-sm sm:text-base font-bold text-white flex items-center gap-2">
+                <Mail className="text-brand-violet w-4 h-4" /> Top 5 High Outreach Companies
+              </h3>
+              <span className="text-[10px] text-slate-500 uppercase tracking-widest font-black">Outreach Volume</span>
+            </div>
+
+            <div className="h-[250px]">
+              {stats.topOutreachCompanies && stats.topOutreachCompanies.length > 0 ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={stats.topOutreachCompanies} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="barColorOutreach" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#8b5cf6" />
+                        <stop offset="100%" stopColor="#6366f1" />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#ffffff05" vertical={false} />
+                    <XAxis dataKey="name" stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} />
+                    <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} allowDecimals={false} />
+                    <RechartsTooltip
+                      contentStyle={{ backgroundColor: '#1e293b', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
+                      itemStyle={{ color: '#fff' }}
+                      cursor={false}
+                    />
+                    <Bar name="Outreach Emails" dataKey="count" fill="url(#barColorOutreach)" radius={[6, 6, 0, 0]} maxBarSize={28} />
+                  </BarChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="h-full flex flex-col items-center justify-center text-center text-slate-500">
+                  <Mail size={24} className="mb-2 opacity-50 text-slate-600" />
+                  <p className="text-xs">No outreach emails sent yet.</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* GitHub Style Heatmap */}

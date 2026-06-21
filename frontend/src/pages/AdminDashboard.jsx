@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { motion } from 'framer-motion';
-import { Users, Activity, Briefcase, Zap, AlertTriangle, ShieldCheck, TrendingDown, Target, Mail, Building2 } from 'lucide-react';
+import { Users, Activity, Briefcase, Zap, AlertTriangle, ShieldCheck, TrendingDown, Target, Mail, Building2, MapPin } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Skeleton from '../components/Skeleton';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell, Legend } from 'recharts';
@@ -47,6 +47,8 @@ const AdminDashboard = () => {
   
   const COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
 
+  const hasEmailAccess = user?.permissions && (user.permissions.includes('ALL') || user.permissions.includes('EMAIL_CAMPAIGNS'));
+
   useEffect(() => {
     const fetchAdminStats = async () => {
       setLoading(true);
@@ -86,7 +88,7 @@ const AdminDashboard = () => {
     }
   };
 
-  if (loading && !stats) {
+  if (loading || !stats) {
     return (
       <div className="space-y-8 pb-12">
         <Skeleton className="w-1/3 h-10" />
@@ -119,10 +121,12 @@ const AdminDashboard = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
+      <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 ${hasEmailAccess ? 'xl:grid-cols-6' : 'xl:grid-cols-5'} gap-6`}>
          <StatsCard title="Total Platform Users" value={stats.totalUsers} icon={Users} color="bg-brand-indigo" />
          <StatsCard title="Global Applications" value={stats.totalJobs} icon={Briefcase} color="bg-brand-blue" />
-         <StatsCard title="Global Outreaches" value={stats.totalOutreaches || 0} icon={Mail} color="bg-brand-violet" />
+         {hasEmailAccess && (
+           <StatsCard title="Global Outreaches" value={stats.totalOutreaches || 0} icon={Mail} color="bg-brand-violet" />
+         )}
          <StatsCard title="Targeted Companies" value={stats.totalCompanies || 0} icon={Building2} color="bg-brand-blue" />
          <StatsCard title="Interviews Secured" value={stats.totalInterviews} icon={Activity} color="bg-brand-violet" />
          <StatsCard title="System Health" value="99.9%" icon={Zap} color="bg-emerald-500" />
@@ -253,8 +257,99 @@ const AdminDashboard = () => {
              ))}
           </div>
         </div>
+      </div>
 
-        {/* Global System AI Insights */}
+      {/* Company Location & Outreach Analytics Row */}
+      <div className={`grid grid-cols-1 ${hasEmailAccess ? 'lg:grid-cols-2' : 'grid-cols-1'} gap-8 mt-8`}>
+        {/* Company Location City Segregation Donut Chart */}
+        <div className="glass-card p-6 border border-white/5 relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-brand-blue/5 blur-3xl -z-10 rounded-full" />
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+              <MapPin className="text-brand-blue w-5 h-5" /> Global Company Locations by City
+            </h3>
+            <span className="text-xs bg-brand-blue/10 text-brand-blue font-bold px-3 py-1 rounded-full uppercase tracking-wider">City Segregation</span>
+          </div>
+
+          <div className="h-[250px] flex items-center justify-center">
+            {stats.companiesByCity && stats.companiesByCity.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={stats.companiesByCity}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={80}
+                    paddingAngle={5}
+                    dataKey="count"
+                    nameKey="city"
+                  >
+                    {stats.companiesByCity.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <RechartsTooltip
+                    contentStyle={{ backgroundColor: '#1e293b', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
+                    itemStyle={{ color: '#fff' }}
+                  />
+                  <Legend verticalAlign="bottom" height={36} iconType="circle" iconSize={8} wrapperStyle={{ fontSize: '11px', color: '#94a3b8' }} />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex flex-col items-center justify-center text-center text-slate-500">
+                <MapPin size={24} className="mb-2 opacity-50 text-slate-600" />
+                <p className="text-xs">No city data available.</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Top 5 High Outreach Companies Bar Chart */}
+        {hasEmailAccess && (
+          <div className="glass-card p-6 border border-white/5 relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-brand-violet/5 blur-3xl -z-10 rounded-full" />
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                <Mail className="text-brand-violet w-5 h-5" /> Top 5 High Outreach Companies
+              </h3>
+              <span className="text-xs bg-brand-violet/10 text-brand-violet font-bold px-3 py-1 rounded-full uppercase tracking-wider">Outreach Volume</span>
+            </div>
+
+            <div className="h-[250px]">
+              {stats.topOutreachCompanies && stats.topOutreachCompanies.length > 0 ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={stats.topOutreachCompanies} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="barColorOutreachAdmin" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#8b5cf6" />
+                        <stop offset="100%" stopColor="#6366f1" />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#ffffff05" vertical={false} />
+                    <XAxis dataKey="name" stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} />
+                    <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} allowDecimals={false} />
+                    <RechartsTooltip
+                      contentStyle={{ backgroundColor: '#1e293b', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
+                      itemStyle={{ color: '#fff' }}
+                      cursor={false}
+                    />
+                    <Bar name="Outreach Emails" dataKey="count" fill="url(#barColorOutreachAdmin)" radius={[6, 6, 0, 0]} maxBarSize={28} />
+                  </BarChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="h-full flex flex-col items-center justify-center text-center text-slate-500">
+                  <Mail size={24} className="mb-2 opacity-50 text-slate-600" />
+                  <p className="text-xs">No outreach data available.</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Global System AI Insights */}
+      <div className="mt-8">
         <div className="glass-card p-6 border-brand-indigo/20 border overflow-hidden relative">
           <div className="absolute top-0 right-0 w-64 h-64 bg-brand-indigo/5 blur-3xl rounded-full -z-10" />
           <h3 className="text-xl font-bold text-white flex items-center gap-2 mb-6">

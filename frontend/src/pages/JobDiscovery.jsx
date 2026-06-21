@@ -147,7 +147,7 @@ const JobDiscovery = () => {
   const [search, setSearch] = useState('');
   const [locationSearch, setLocationSearch] = useState('');
   const [category, setCategory] = useState('software-dev');
-  const [activeTab, setActiveTab] = useState('local');
+  const [activeTab, setActiveTab] = useState('remote');
   const [savingId, setSavingId] = useState(null);
   const [savedIds, setSavedIds] = useState(new Set());
 

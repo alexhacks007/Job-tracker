@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import debounce from 'lodash/debounce';
+import logo from '../zenbyte_logo.png';
 
 const NavTabs = [
   { name: 'Dashboard', path: '/', icon: LayoutDashboard },
@@ -116,11 +117,9 @@ const Navigation = () => {
           
           {/* Logo */}
           <div className="flex items-center gap-2 cursor-pointer group" onClick={() => navigate('/')}>
-             <div className="w-9 h-9 bg-gradient-to-br from-brand-indigo to-brand-violet rounded-xl flex items-center justify-center shadow-lg shadow-brand-indigo/20 group-hover:scale-105 transition-transform">
-                <Briefcase className="text-white w-5 h-5" />
-             </div>
+             <img src={logo} alt="ZenByte Logo" className="w-9 h-9 object-contain rounded-lg group-hover:scale-105 transition-transform" />
              <span className="hidden md:block font-bold text-xl tracking-tight bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
-                JobTracker<span className="text-brand-indigo">.</span>
+                ZenByte <span className="text-brand-indigo font-medium">Job Tracker</span>
              </span>
           </div>
 

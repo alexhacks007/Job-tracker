@@ -19,8 +19,9 @@ const Sidebar = ({ isOpen, onClose }) => {
   const sidebarContent = (
     <div className="w-64 glass border-r border-gray-200 dark:border-gray-800 flex flex-col h-full transition-colors duration-300">
       <div className="p-6 flex items-center justify-between">
-        <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-500 bg-clip-text text-transparent">
-          Job Tracker Pro
+        <h1 className="text-xl font-black tracking-tight">
+          <span className="bg-gradient-to-r from-blue-600 to-indigo-500 bg-clip-text text-transparent">ZenByte</span>{' '}
+          <span className="text-slate-800 dark:text-white font-medium">Job Tracker</span>
         </h1>
         <button onClick={onClose} className="md:hidden p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg text-gray-500">
           <X size={20} />

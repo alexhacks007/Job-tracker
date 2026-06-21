@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
+import logo from '../zenbyte_logo.png';
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -39,8 +40,12 @@ const Login = () => {
         className="max-w-md w-full glass p-8 rounded-2xl shadow-xl"
       >
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-500 bg-clip-text text-transparent">
-            JobTracker Pro
+          <div className="flex justify-center mb-4">
+            <img src={logo} alt="ZenByte Logo" className="w-16 h-16 object-contain rounded-2xl shadow-lg border border-white/10" />
+          </div>
+          <h2 className="text-3xl font-black tracking-tight flex items-center justify-center gap-2">
+            <span className="bg-gradient-to-r from-blue-600 to-indigo-500 bg-clip-text text-transparent">ZenByte</span>
+            <span className="text-slate-800 dark:text-white font-medium">Job Tracker</span>
           </h2>
           <p className="text-gray-500 dark:text-gray-400 mt-2">Sign in to your account</p>
         </div>

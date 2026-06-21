@@ -14,12 +14,27 @@ class DashboardStatsView(APIView):
             total_outreaches = EmailLog.objects.count()
             total_companies = Company.objects.count()
             top_comp = Job.objects.values('company_name').annotate(name=models.F('company_name'), count=models.Count('id')).order_by('-count')[:5].values('name', 'count')
+            companies_by_city_qs = Company.objects.values('address').annotate(count=Count('id')).order_by('-count')
+            top_outreach_qs = Company.objects.values('name').annotate(count=Count('emaillog')).order_by('-count')[:5]
         else:
             jobs = Job.objects.filter(user=request.user)
             total_outreaches = EmailLog.objects.filter(user=request.user).count()
             total_companies = Company.objects.filter(user=request.user).count()
             top_comp = Job.objects.filter(user=request.user).values('company_name').annotate(name=models.F('company_name'), count=models.Count('id')).order_by('-count')[:5].values('name', 'count')
+            companies_by_city_qs = Company.objects.filter(user=request.user).values('address').annotate(count=Count('id')).order_by('-count')
+            top_outreach_qs = Company.objects.filter(user=request.user).values('name').annotate(count=Count('emaillog')).order_by('-count')[:5]
             
+        # Group and clean cities
+        city_map = {}
+        for item in companies_by_city_qs:
+            city = item['address'].strip() if item['address'] else 'Unknown'
+            if not city:
+                city = 'Unknown'
+            city_map[city] = city_map.get(city, 0) + item['count']
+        companies_by_city = [{'city': k, 'count': v} for k, v in city_map.items()]
+
+        top_outreach_companies = [{'name': item['name'], 'count': item['count']} for item in top_outreach_qs]
+
         stats = {
             'totalJobs': jobs.count(),
             'applied': jobs.filter(status__icontains='applied').count(),
@@ -29,6 +44,8 @@ class DashboardStatsView(APIView):
             'totalOutreaches': total_outreaches,
             'totalCompanies': total_companies,
             'topCompanies': list(top_comp),
+            'companiesByCity': companies_by_city,
+            'topOutreachCompanies': top_outreach_companies,
             'chartData': [],
             'applicationsByDate': {},
             'interviewsByDate': {},
@@ -88,6 +105,20 @@ class AdminDashboardStatsView(APIView):
         status_dist = Job.objects.values('status').annotate(name=models.F('status'), value=Count('id')).values('name', 'value')
         top_comp = Job.objects.values('company_name').annotate(name=models.F('company_name'), applications=Count('id'), interviews=Count('id', filter=Q(status__icontains='interview'))).order_by('-applications')[:5].values('name', 'applications', 'interviews')
         
+        companies_by_city_qs = Company.objects.values('address').annotate(count=Count('id')).order_by('-count')
+        top_outreach_qs = Company.objects.values('name').annotate(count=Count('emaillog')).order_by('-count')[:5]
+
+        # Group and clean cities
+        city_map = {}
+        for item in companies_by_city_qs:
+            city = item['address'].strip() if item['address'] else 'Unknown'
+            if not city:
+                city = 'Unknown'
+            city_map[city] = city_map.get(city, 0) + item['count']
+        companies_by_city = [{'city': k, 'count': v} for k, v in city_map.items()]
+
+        top_outreach_companies = [{'name': item['name'], 'count': item['count']} for item in top_outreach_qs]
+
         cutoff_date = timezone.now().date() - timedelta(days=days)
         chart_data = Job.objects.filter(applied_date__gte=cutoff_date).values('applied_date').annotate(date=models.F('applied_date'), count=Count('id')).order_by('applied_date').values('date', 'count')
         
@@ -106,5 +137,7 @@ class AdminDashboardStatsView(APIView):
             'recentRiskUsers': list(recent_risk_users),
             'globalChartData': list(chart_data),
             'statusDistribution': list(status_dist),
-            'topCompanies': list(top_comp)
+            'topCompanies': list(top_comp),
+            'companiesByCity': companies_by_city,
+            'topOutreachCompanies': top_outreach_companies
         })

@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
+import logo from '../zenbyte_logo.png';
 
 const NAV_ITEMS = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/', permission: 'ANALYTICS_ACCESS' },
@@ -153,11 +154,9 @@ const Navbar = () => {
         
         {/* Brand */}
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-indigo to-brand-violet flex items-center justify-center shadow-[0_0_20px_rgba(99,102,241,0.3)] hover:scale-105 transition-transform cursor-pointer" onClick={() => navigate('/')}>
-            <Target className="text-white w-6 h-6" />
-          </div>
+          <img src={logo} alt="ZenByte Logo" className="w-10 h-10 object-contain rounded-xl hover:scale-105 transition-transform cursor-pointer" onClick={() => navigate('/')} />
           <span className="font-black text-xl tracking-tight text-white hidden md:block">
-            TRACKER<span className="text-brand-indigo">PRO</span>
+            ZenByte <span className="text-brand-indigo font-medium">Job Tracker</span>
           </span>
         </div>
 
