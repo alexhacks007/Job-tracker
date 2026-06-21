@@ -7,24 +7,35 @@ const AchievementBadge = ({ achievement }) => {
 
   return (
     <motion.div 
-      whileHover={{ scale: isUnlocked ? 1.02 : 1 }}
-      className={`glass p-4 rounded-3xl flex items-center gap-4 transition-all ${
-        isUnlocked ? 'border-brand-indigo/30 hover:shadow-[0_0_15px_rgba(99,102,241,0.2)]' : 'opacity-60 grayscale'
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ type: 'spring', stiffness: 100, damping: 14 }}
+      whileHover={{ scale: isUnlocked ? 1.03 : 1, y: isUnlocked ? -2 : 0 }}
+      className={`glass p-3 sm:p-4 rounded-2xl sm:rounded-3xl flex items-start gap-3 transition-all min-w-0 ${
+        isUnlocked 
+          ? 'border border-brand-indigo/30 hover:shadow-[0_0_20px_rgba(99,102,241,0.25)] hover:border-brand-indigo/50' 
+          : 'opacity-50 grayscale border border-white/5'
       }`}
     >
-      <div className={`w-14 h-14 shrink-0 rounded-2xl flex items-center justify-center shadow-inner ${
-        isUnlocked ? 'bg-gradient-to-tr from-brand-indigo to-brand-violet' : 'bg-surface-800 border border-white/5'
+      <div className={`w-10 h-10 sm:w-12 sm:h-12 shrink-0 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-inner ${
+        isUnlocked 
+          ? 'bg-gradient-to-tr from-brand-indigo to-brand-violet shadow-brand-indigo/20' 
+          : 'bg-white/5 border border-white/5'
       }`}>
         {isUnlocked ? (
-          <Award className="text-white w-6 h-6" />
+          <Award className="text-white w-4 h-4 sm:w-5 sm:h-5" />
         ) : (
-          <Lock className="text-slate-500 w-6 h-6" />
+          <Lock className="text-slate-500 w-4 h-4 sm:w-5 sm:h-5" />
         )}
       </div>
-      <div>
-        <h4 className="text-white font-bold text-sm">{achievement.name}</h4>
-        <p className="text-slate-400 text-xs mt-0.5">{achievement.description}</p>
-        {isUnlocked && <p className="text-brand-cyan text-[10px] mt-1 font-bold uppercase tracking-wider">Unlocked {achievement.date}</p>}
+      <div className="min-w-0 flex-1">
+        <h4 className="text-white font-bold text-xs sm:text-sm leading-tight">{achievement.name}</h4>
+        <p className="text-slate-400 text-[10px] sm:text-xs mt-0.5 leading-relaxed">{achievement.description}</p>
+        {isUnlocked && (
+          <p className="text-brand-cyan text-[9px] sm:text-[10px] mt-1 font-bold uppercase tracking-wider">
+            ✓ Unlocked
+          </p>
+        )}
       </div>
     </motion.div>
   );

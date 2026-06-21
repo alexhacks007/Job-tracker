@@ -110,17 +110,19 @@ const ApplicationInsights = ({ stats }) => {
       animate={{ opacity: 1, y: 0 }}
       className="glass p-1 rounded-[2.5rem] bg-gradient-to-br from-white/10 to-transparent shadow-2xl relative overflow-hidden"
     >
-      <div className="p-8 pb-4">
+      <div className="p-4 sm:p-8 pb-4">
         {/* Header Section */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
           <div>
-            <h2 className="text-2xl font-black text-white tracking-tight flex items-center gap-3">
-               Application Insights
-               <div className="flex bg-white/5 p-1 rounded-xl">
-                  <button onClick={() => setView('trend')} title="Trend Chart" className={`p-1.5 rounded-lg transition-all ${view === 'trend' ? 'bg-brand-indigo text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}><Activity size={14} /></button>
-                  <button onClick={() => setView('distribution')} title="Distribution View" className={`p-1.5 rounded-lg transition-all ${view === 'distribution' ? 'bg-brand-indigo text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}><Layout size={14} /></button>
-               </div>
-            </h2>
+            <div className="flex flex-wrap items-center gap-3">
+              <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+                 Application Insights
+              </h2>
+              <div className="flex bg-white/5 p-0.5 rounded-lg border border-white/5">
+                 <button onClick={() => setView('trend')} title="Trend Chart" className={`p-1.5 rounded-md transition-all ${view === 'trend' ? 'bg-brand-indigo text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}><Activity size={12} /></button>
+                 <button onClick={() => setView('distribution')} title="Distribution View" className={`p-1.5 rounded-md transition-all ${view === 'distribution' ? 'bg-brand-indigo text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}><Layout size={12} /></button>
+              </div>
+            </div>
             <div className="flex items-center gap-2 mt-2">
                {comparisonPercent >= 0 ? <TrendingUp size={14} className="text-emerald-400" /> : <TrendingDown size={14} className="text-red-400" />}
                <span className={`text-xs font-bold ${comparisonPercent >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
@@ -130,12 +132,12 @@ const ApplicationInsights = ({ stats }) => {
             </div>
           </div>
 
-          <div className="flex items-center gap-3 w-full md:w-auto">
-             <div className="relative group flex-1 md:flex-none">
+          <div className="flex items-center gap-3 w-full sm:w-auto">
+             <div className="relative group flex-1 sm:flex-none">
                 <select 
                   value={range} 
                   onChange={(e) => setRange(Number(e.target.value))}
-                  className="w-full md:w-40 appearance-none bg-white/5 border border-white/10 text-white text-xs font-bold py-3 px-5 rounded-2xl outline-none focus:ring-2 focus:ring-brand-indigo/30 transition-all cursor-pointer hover:bg-white/10"
+                  className="w-full sm:w-40 appearance-none bg-white/5 border border-white/10 text-white text-xs font-bold py-3 px-5 rounded-2xl outline-none focus:ring-2 focus:ring-brand-indigo/30 transition-all cursor-pointer hover:bg-white/10"
                 >
                    <option value={7}>Last 7 days</option>
                    <option value={30}>Last 30 days</option>
@@ -164,7 +166,7 @@ const ApplicationInsights = ({ stats }) => {
 
         <div className="grid grid-cols-1 lg:grid-cols-10 gap-8 h-full">
           {/* Main Content (Left 70%) */}
-          <div className="lg:col-span-7 h-[400px]">
+          <div className="lg:col-span-7 h-[300px] sm:h-[400px]">
              {isLowData && view === 'trend' ? (
                <div className="h-full flex flex-col items-center justify-center text-center p-8 glass rounded-[2.5rem] border-dashed border-white/10">
                   <div className="w-16 h-16 rounded-full bg-slate-900 flex items-center justify-center mb-6">
@@ -222,6 +224,7 @@ const ApplicationInsights = ({ stats }) => {
                                 tickLine={false} 
                                 tick={{ fill: '#475569', fontSize: 10, fontWeight: '700' }}
                                 dy={10}
+                                minTickGap={25}
                               />
                               <YAxis hide />
                               <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#6366f1', strokeWidth: 1 }} />
@@ -249,7 +252,7 @@ const ApplicationInsights = ({ stats }) => {
                         <ResponsiveContainer width="100%" height={300}>
                            <BarChart data={weekdayData}>
                               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ffffff05" />
-                              <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 10, fontWeight: '700' }} />
+                              <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 10, fontWeight: '700' }} minTickGap={25} />
                               <Tooltip 
                                 cursor={{ fill: 'rgba(255,255,255,0.03)' }} 
                                 contentStyle={{ backgroundColor: '#020617', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)' }} 

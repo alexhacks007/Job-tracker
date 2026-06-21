@@ -112,10 +112,39 @@ const Dashboard = () => {
 
   const responseRate = Math.round((stats.interviews / (stats.applied || 1)) * 100);
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.05
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    show: { 
+      opacity: 1, 
+      y: 0, 
+      transition: { 
+        type: 'spring', 
+        stiffness: 90, 
+        damping: 14 
+      } 
+    }
+  };
+
   return (
-    <div className="space-y-6 md:space-y-8 pb-12">
+    <motion.div 
+      variants={containerVariants}
+      initial="hidden"
+      animate="show"
+      className="space-y-6 md:space-y-8 pb-12"
+    >
       {/* Welcome Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 md:gap-6">
+      <motion.div variants={itemVariants} className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 md:gap-6">
         <div>
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white tracking-tight flex items-center gap-3">
             Mission Control <Sparkles className="w-5 h-5 md:w-6 md:h-6 text-brand-violet shrink-0" />
@@ -124,19 +153,19 @@ const Dashboard = () => {
         </div>
         <div className="w-full sm:w-auto flex gap-1 bg-white/5 p-1 rounded-2xl border border-white/5 shadow-inner">
            {['7', '30', '90'].map(range => (
-             <button 
-               key={range}
-               onClick={() => setTimeRange(range)}
-               className={`flex-1 sm:flex-none px-4 sm:px-6 py-2 rounded-xl text-xs font-bold transition-all ${timeRange === range ? 'bg-brand-indigo text-white shadow-lg shadow-brand-indigo/20 scale-[1.02]' : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'}`}
-             >
-               Last {range}d
-             </button>
+              <button 
+                key={range}
+                onClick={() => setTimeRange(range)}
+                className={`flex-1 sm:flex-none px-4 sm:px-6 py-2 rounded-xl text-xs font-bold transition-all ${timeRange === range ? 'bg-brand-indigo text-white shadow-lg shadow-brand-indigo/20 scale-[1.02]' : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'}`}
+              >
+                Last {range}d
+              </button>
            ))}
         </div>
-      </div>
+      </motion.div>
 
       {/* Top Main Grid: Insights & Gamification */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-1">
           <InsightsPanel insights={insights} />
         </div>
@@ -153,17 +182,17 @@ const Dashboard = () => {
           {/* Achievements Row */}
           <div className="glass-card p-5 sm:p-6">
              <h4 className="text-slate-400 font-medium text-xs sm:text-sm mb-4 uppercase tracking-widest">Recent Achievements</h4>
-             <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                 {achievementsData.achievements && achievementsData.achievements.map((ach) => (
                   <AchievementBadge key={ach.id} achievement={ach} />
                 ))}
              </div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Stats Cards Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
+      <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
         <StatsCard 
           title="Total Applications" 
           value={stats.applied} 
@@ -191,10 +220,10 @@ const Dashboard = () => {
           color="bg-orange-500" 
           trend="up" trendValue="8"
         />
-      </div>
+      </motion.div>
 
       {/* Advanced Outreach & Company Analytics */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Top 5 Most Applied Companies Bar Chart or List */}
         <div className={`glass-card p-5 sm:p-6 border border-white/5 relative overflow-hidden group ${hasEmailAccess ? 'lg:col-span-2' : 'lg:col-span-3'}`}>
@@ -276,10 +305,10 @@ const Dashboard = () => {
             </div>
           </div>
         )}
-      </div>
+      </motion.div>
 
       {/* Company Distribution & High Outreach Analytics */}
-      <div className={`grid grid-cols-1 ${hasEmailAccess ? 'lg:grid-cols-2' : 'grid-cols-1'} gap-6`}>
+      <motion.div variants={itemVariants} className={`grid grid-cols-1 ${hasEmailAccess ? 'lg:grid-cols-2' : 'grid-cols-1'} gap-6`}>
         {/* Companies by City Donut Chart */}
         <div className="glass-card p-5 sm:p-6 border border-white/5 relative overflow-hidden group">
           <div className="absolute top-0 right-0 w-32 h-32 bg-brand-blue/5 blur-3xl -z-10 rounded-full" />
@@ -365,10 +394,10 @@ const Dashboard = () => {
             </div>
           </div>
         )}
-      </div>
+      </motion.div>
 
       {/* GitHub Style Heatmap */}
-      <div className="glass-card p-5 sm:p-6 overflow-hidden">
+      <motion.div variants={itemVariants} className="glass-card p-5 sm:p-6 overflow-hidden">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-2">
            <h3 className="text-lg font-bold text-white flex items-center gap-2">
              Activity Heatmap
@@ -380,16 +409,14 @@ const Dashboard = () => {
             <Heatmap data={heatmapData} />
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Traditional Analytics (Area Chart) */}
-      <div className="overflow-x-auto no-scrollbar">
-        <div className="min-w-[650px] lg:min-w-0">
-          <ApplicationInsights stats={stats} />
-        </div>
-      </div>
+      <motion.div variants={itemVariants}>
+        <ApplicationInsights stats={stats} />
+      </motion.div>
 
-    </div>
+    </motion.div>
   );
 };
 
